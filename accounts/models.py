@@ -2,13 +2,18 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 class MyAccountManager(BaseUserManager):
-    def create_user(self, email, username, password=None):
+    def create_user(self, email, username,is_organizator, password=None):
         if not email:
             raise ValueError('Users must have an email address')
+        if not username:
+            raise ValueError('Users must have a username')
+        if is_organizator is None:
+            raise ValueError('Users must have a is_organizator')
 
         user = self.model(
             email=self.normalize_email(email),
             username=username,
+            is_organizator=is_organizator
         )
 
         user.set_password(password)
@@ -30,9 +35,10 @@ class MyAccountManager(BaseUserManager):
 
 class Account(AbstractBaseUser):
     email = models.EmailField(verbose_name="email", max_length=60, unique=True)
-    age = models.IntegerField(blank=True)
-    city = models.CharField(max_length=100, blank=True)
-    work_exp = models.IntegerField(blank=True)
+    username = models.CharField(max_length=30)
+    age = models.IntegerField(blank=True, null=True)
+    city = models.CharField(max_length=100, blank=True, null=True)
+    work_exp = models.IntegerField(blank=True, null=True)
     is_organizator = models.CharField(max_length=100, blank=False)
     date_joined = models.DateTimeField(
         verbose_name='date joined', auto_now_add=True)
@@ -43,7 +49,7 @@ class Account(AbstractBaseUser):
     is_superuser = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['first_name']
+    REQUIRED_FIELDS = ['username', 'is_organizator']
 
     objects = MyAccountManager()
 

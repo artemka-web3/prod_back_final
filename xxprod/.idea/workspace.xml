@@ -4,24 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0de39867-f118-48a0-a124-c5db8d2a8fc9" name="Changes" comment="user integration with django build-in">
-      <change afterPath="$PROJECT_DIR$/accounts/api.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/xxprod/api.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/accounts/migrations/0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/accounts/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounts/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resumes/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/resumes/migrations/0001_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/xxprod/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/xxprod/urls.py" afterDir="false" />
-    </list>
+    <list default="true" id="0de39867-f118-48a0-a124-c5db8d2a8fc9" name="Changes" comment="user integration with django build-in" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
-  </component>
-  <component name="DjangoConsoleOptions" custom-start-script="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)">
-    <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" />
   </component>
   <component name="Git.Merge.Settings">
     <option name="BRANCH" value="master" />
@@ -39,7 +26,7 @@
         <entry key="$PROJECT_DIR$/.." value="master" />
       </map>
     </option>
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
@@ -56,9 +43,9 @@
     </option>
   </component>
   <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 1
+  "associatedIndex": 0
 }]]></component>
-  <component name="ProjectId" id="2eRgoklZ5k6tLe0hp5WjpoddUZV" />
+  <component name="ProjectId" id="2eRgM9VoMdxweJhTvDdkB8XsEsG" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -66,17 +53,12 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "Django Server.xxprod.executor": "Run",
     "RunOnceActivity.OpenDjangoStructureViewOnStart": "true",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
     "last_opened_file_path": "/home/arklual/Документы/prod3team",
-    "node.js.detected.package.eslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -88,7 +70,6 @@
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
-        <env name="DJANGO_SETTINGS_MODULE" value="xxprod.settings" />
       </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="" />
@@ -126,11 +107,11 @@
     </task>
     <task active="true" id="Default" summary="Default task">
       <changelist id="0de39867-f118-48a0-a124-c5db8d2a8fc9" name="Changes" comment="user integration with django build-in" />
-      <created>1711872981181</created>
+      <created>1711872753652</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1711872981181</updated>
-      <workItem from="1711872982208" duration="6228000" />
+      <updated>1711872753652</updated>
+      <workItem from="1711872754669" duration="227000" />
     </task>
     <option name="localTasksCounter" value="2" />
     <servers />
@@ -150,9 +131,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <ignored-roots>
-      <path value="$PROJECT_DIR$/.." />
-    </ignored-roots>
     <MESSAGE value="user integration with django build-in" />
     <option name="LAST_COMMIT_MESSAGE" value="user integration with django build-in" />
   </component>
