@@ -20,7 +20,7 @@ def profile(request):
     return 200, user
 
 @router.patch('/profile', response={201: UserProfile, 401: Error, 409: Error, 400:Error}, auth=AuthBearer())
-def profile(request, user: UserProfileEdit):
+def profile_patch(request, user: UserProfileEdit):
     payload = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
     user_id = payload['user_id']
     me = get_object_or_404(Account, id=user_id)
