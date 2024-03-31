@@ -4,11 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0de39867-f118-48a0-a124-c5db8d2a8fc9" name="Changes" comment="user signup endpoint">
-      <change afterPath="$PROJECT_DIR$/accounts/schemas.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/authtoken.py" afterDir="false" />
+    <list default="true" id="0de39867-f118-48a0-a124-c5db8d2a8fc9" name="Changes" comment="token auth">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/accounts/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounts/api.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounts/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounts/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounts/schemas.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounts/schemas.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/xxprod/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/xxprod/api.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -138,7 +139,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1711872981181</updated>
-      <workItem from="1711872982208" duration="11021000" />
+      <workItem from="1711872982208" duration="12712000" />
     </task>
     <task id="LOCAL-00002" summary="user signup endpoint">
       <option name="closed" value="true" />
@@ -148,7 +149,15 @@
       <option name="project" value="LOCAL" />
       <updated>1711884822680</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="token auth">
+      <option name="closed" value="true" />
+      <created>1711889942249</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1711889942249</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -171,6 +180,7 @@
     </ignored-roots>
     <MESSAGE value="user integration with django build-in" />
     <MESSAGE value="user signup endpoint" />
-    <option name="LAST_COMMIT_MESSAGE" value="user signup endpoint" />
+    <MESSAGE value="token auth" />
+    <option name="LAST_COMMIT_MESSAGE" value="token auth" />
   </component>
 </project>
