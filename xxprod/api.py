@@ -7,6 +7,7 @@ from ninja.errors import ValidationError
 from authtoken import InvalidToken
 from hackathons.api import hackathon_router, my_hackathon_router
 from profiles.api import router as profiles_router
+from teams.api import team_router
 
 api = NinjaAPI(
     title="Team Search",
@@ -17,6 +18,9 @@ api.add_router("/auth/", accounts_router)
 api.add_router('/hackathons/', hackathon_router)
 api.add_router('/myhackathons/', my_hackathon_router)
 api.add_router('/', profiles_router)
+api.add_router('/teams/', team_router)
+
+
 
 
 @api.exception_handler(IntegrityError)

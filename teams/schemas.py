@@ -9,4 +9,16 @@ class TeamIn(Schema):
     name: str
     creator_id: int
     vacancies_ids: List[int]
+
+
+class Successful(Schema):
+    success: str
+
+
+class Error(Schema):
+    details: str
+
+
+class SentEmail(Schema):
+    link: str
     

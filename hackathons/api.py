@@ -15,7 +15,7 @@ hackathon_router = Router()
 my_hackathon_router = Router()
 
 
-@hackathon_router.post('/', auth = AuthBearer(), response={403: Error, 201: HackathonOut, 401: Error}) # if is authed else 409
+@hackathon_router.post('/', auth = AuthBearer(), response={403: Error, 201: HackathonSchema, 401: Error}) # if is authed else 409
 def create_hackathon(request, body: HackathonIn, image_cover: UploadedFile = File(...)):
     payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
     user_id = payload_dict['user_id']
@@ -28,7 +28,7 @@ def create_hackathon(request, body: HackathonIn, image_cover: UploadedFile = Fil
         hackathon.image_cover.save(image_cover.name, image_cover)
         for participant in body_dict['participants']:
             participant_acc = Account.objects.get(email=participant)
-            hackathon.participants.add(participant_acc.email)
+            hackathon.participants.add(participant_acc)
         return 201, hackathon
     return 403, {'detail': "You are not organizator and you can't create hackathons"}
 
