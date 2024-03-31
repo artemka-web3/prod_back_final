@@ -1,11 +1,11 @@
 from django.db import models
-from accounts.models import User
+from accounts.models import Account
 
 class MiniInterview(models.Model):
     name = models.CharField(max_length = 200, blank = False)
     description = models.TextField(blank = False)
-    assigned_to = models.ForeignKey(User, on_delete = models.CASCADE) # потенциальный наемный сотрудник
-    creator = models.ForeignKey(User, on_delete = models.CASCADE) # работадатель
+    assigned_to = models.ForeignKey(Account, on_delete = models.CASCADE) # потенциальный наемный сотрудник
+    creator = models.ForeignKey(Account, on_delete = models.CASCADE) # работадатель
 
 class YesOrNoQ(models.Model):
     mini_interview = models.ForeignKey(MiniInterview, on_delete = models.CASCADE)
