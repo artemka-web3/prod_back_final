@@ -28,7 +28,7 @@ def signup(request, user: UserProfile):
 
 @router.post('/signin', response={200: Token, 404: Error, 400: Error    })
 def signin(request, user: UserSignin):
-    account = auth.authenticate(username=user.username, password=user.password)
+    account = auth.authenticate(username=user.email, password=user.password)
     if account is not None:
         encoded_jwt = jwt.encode({"createdAt": datetime.utcnow().timestamp(), "user_id": account.id}, SECRET_KEY, algorithm="HS256")
         return 200, {"token": encoded_jwt}
