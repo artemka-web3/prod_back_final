@@ -1,27 +1,20 @@
-from typing import Optional
-from ninja import Router, Schema, Field
+from datetime import datetime
 
+from django.http import Http404
+from ninja import Router, Schema, Field
+from django.contrib import auth
+import jwt
+from ninja.security import HttpBearer
 
 from .models import Account
-
-class User(Schema):
-    username: str = Field(..., min_length=1, max_length=30, required=True)
-    email: str = Field(..., min_length=1, max_length=60, required=True)
-    password: str = Field(..., min_length=6, required=True)
-    is_organizator: bool
-    age: Optional[int] = None
-    city: Optional[str] = None
-    work_experience: Optional[int] = None
-
-
-class Error(Schema):
-    details: str
+from .schemas import Token, UserSignin, UserProfile, Error
+from xxprod.settings import SECRET_KEY
 
 
 router = Router()
 
-@router.post('/signup', response={201: User, 409: Error, 400: Error})
-def signup(request, user: User):
+@router.post('/signup', response={201: UserProfile, 409: Error, 400: Error})
+def signup(request, user: UserProfile):
     account = Account.objects.create_user(email=user.email, username=user.username, password=user.password, is_organizator=user.is_organizator)
     if user.age is not None:
         account.age = user.age
@@ -33,4 +26,11 @@ def signup(request, user: User):
     return 201, account
 
 
-
+@router.post('/signin', response={200: Token, 404: Error, 400: Error    })
+def signup(request, user: UserSignin):
+    account = auth.authenticate(username=user.username, password=user.password)
+    if account is not None:
+        encoded_jwt = jwt.encode({"createdAt": datetime.utcnow().timestamp(), "user_id": account.id}, SECRET_KEY, algorithm="HS256")
+        return 200, {"token": encoded_jwt}
+    else:
+        raise Http404

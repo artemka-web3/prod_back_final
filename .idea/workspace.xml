@@ -4,16 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0de39867-f118-48a0-a124-c5db8d2a8fc9" name="Changes" comment="user integration with django build-in">
-      <change afterPath="$PROJECT_DIR$/accounts/api.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/xxprod/api.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+    <list default="true" id="0de39867-f118-48a0-a124-c5db8d2a8fc9" name="Changes" comment="user signup endpoint">
+      <change afterPath="$PROJECT_DIR$/accounts/schemas.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/authtoken.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/accounts/migrations/0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/accounts/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounts/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resumes/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/resumes/migrations/0001_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/xxprod/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/xxprod/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounts/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounts/api.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/xxprod/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/xxprod/api.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -22,6 +18,13 @@
   </component>
   <component name="DjangoConsoleOptions" custom-start-script="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)">
     <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
   </component>
   <component name="Git.Merge.Settings">
     <option name="BRANCH" value="master" />
@@ -80,6 +83,11 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/accounts" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="xxprod" type="Python.DjangoServer" factoryName="Django server">
       <module name="xxprod" />
@@ -130,9 +138,17 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1711872981181</updated>
-      <workItem from="1711872982208" duration="6228000" />
+      <workItem from="1711872982208" duration="11021000" />
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="user signup endpoint">
+      <option name="closed" value="true" />
+      <created>1711884822680</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1711884822680</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -154,6 +170,7 @@
       <path value="$PROJECT_DIR$/.." />
     </ignored-roots>
     <MESSAGE value="user integration with django build-in" />
-    <option name="LAST_COMMIT_MESSAGE" value="user integration with django build-in" />
+    <MESSAGE value="user signup endpoint" />
+    <option name="LAST_COMMIT_MESSAGE" value="user signup endpoint" />
   </component>
 </project>
