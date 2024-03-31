@@ -1,7 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-from hackathons.models import Hackathon
-from projects.models import Project
 
 class MyAccountManager(BaseUserManager):
     def create_user(self, email, username, password=None):
@@ -36,8 +34,6 @@ class Account(AbstractBaseUser):
     city = models.CharField(max_length=100, blank=True)
     work_exp = models.IntegerField(blank=True)
     is_organizator = models.CharField(max_length=100, blank=False)
-    hackathons = models.ManyToManyField(Hackathon)
-    teams = models.ManyToManyField(Project)
     date_joined = models.DateTimeField(
         verbose_name='date joined', auto_now_add=True)
     last_login = models.DateTimeField(verbose_name='last login', auto_now=True)

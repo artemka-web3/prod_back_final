@@ -4,8 +4,8 @@ from accounts.models import Account
 class MiniInterview(models.Model):
     name = models.CharField(max_length = 200, blank = False)
     description = models.TextField(blank = False)
-    assigned_to = models.ForeignKey(Account, on_delete = models.CASCADE) # потенциальный наемный сотрудник
-    creator = models.ForeignKey(Account, on_delete = models.CASCADE) # работадатель
+    intended_to = models.ForeignKey(Account, on_delete = models.CASCADE, related_name = 'intended_to') # потенциальный наемный сотрудник
+    employee = models.ForeignKey(Account, on_delete = models.CASCADE, related_name = 'employee') # работадатель
 
 class YesOrNoQ(models.Model):
     mini_interview = models.ForeignKey(MiniInterview, on_delete = models.CASCADE)

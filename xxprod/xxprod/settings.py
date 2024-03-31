@@ -38,14 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'hackathons',
-    'hardskill_tags',
     'projects',
     'resumes',
-    'softskill_tags',
     'teams',
     'accounts',
     'vacancies',
-
+    'mini_interviews'
 ]
 
 AUTH_USER_MODEL = 'accounts.Account'
