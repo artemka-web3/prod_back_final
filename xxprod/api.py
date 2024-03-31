@@ -1,4 +1,4 @@
-from django.http import JsonResponse, Http404
+from django.http import Http404
 from ninja import NinjaAPI
 from accounts.api import router as accounts_router
 from django.db.utils import IntegrityError
@@ -6,12 +6,17 @@ from ninja.errors import ValidationError
 
 from authtoken import InvalidToken
 from hackathons.api import hackathon_router, my_hackathon_router
+from profiles.api import router as profiles_router
 
-api = NinjaAPI()
+api = NinjaAPI(
+    title="Team Search",
+    description="This is an API for team search."
+)
 
 api.add_router("/auth/", accounts_router)
 api.add_router('/hackathons/', hackathon_router)
 api.add_router('/myhackathons/', my_hackathon_router)
+api.add_router('/', profiles_router)
 
 
 @api.exception_handler(IntegrityError)

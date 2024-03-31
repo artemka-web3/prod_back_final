@@ -4,7 +4,6 @@ from django.http import Http404
 from ninja import Router, Schema, Field
 from django.contrib import auth
 import jwt
-from ninja.security import HttpBearer
 
 from .models import Account
 from .schemas import Token, UserSignin, UserProfile, Error

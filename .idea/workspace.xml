@@ -4,8 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0de39867-f118-48a0-a124-c5db8d2a8fc9" name="Changes" comment="little fixes">
+    <list default="true" id="0de39867-f118-48a0-a124-c5db8d2a8fc9" name="Changes" comment="fix auth">
+      <change afterPath="$PROJECT_DIR$/profiles/api.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/profiles/schemas.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/accounts/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounts/api.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/xxprod/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/xxprod/api.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -135,7 +139,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1711872981181</updated>
-      <workItem from="1711872982208" duration="12954000" />
+      <workItem from="1711872982208" duration="17519000" />
     </task>
     <task id="LOCAL-00002" summary="user signup endpoint">
       <option name="closed" value="true" />
@@ -161,7 +165,15 @@
       <option name="project" value="LOCAL" />
       <updated>1711891631502</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="fix auth">
+      <option name="closed" value="true" />
+      <created>1711891862490</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1711891862490</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -186,6 +198,7 @@
     <MESSAGE value="user signup endpoint" />
     <MESSAGE value="token auth" />
     <MESSAGE value="little fixes" />
-    <option name="LAST_COMMIT_MESSAGE" value="little fixes" />
+    <MESSAGE value="fix auth" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix auth" />
   </component>
 </project>
