@@ -8,12 +8,13 @@ from accounts.models import Account
 import jwt
 from authtoken import AuthBearer
 from xxprod.settings import SECRET_KEY
+from datetime import datetime
 
 
 team_router = Router()
 
 
-@team_router.post("/create", auth = AuthBearer)
+@team_router.post("/create", auth = AuthBearer())
 def create_team(request, body: TeamIn):
     payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
     user_id = payload_dict['user_id']
@@ -25,9 +26,8 @@ def create_team(request, body: TeamIn):
             Keyword.objects.create(vacancy = vacancy, text = kw)    
     return team
 
-
-@team_router.delete("/delete", auth = AuthBearer)
-def delete_team(request, hashed_id):
+@team_router.delete("/delete", auth = AuthBearer())
+def delete_team(request, id):
     payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
     user_id = payload_dict['user_id']
     user = get_object_or_404(Account, id=user_id)
@@ -36,12 +36,14 @@ def delete_team(request, hashed_id):
     return {'success': True}
 
 @team_router.post('/invite-user')
-def invite_user(request, hashed_id):
+def invite_user(request, id):
     payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
     user_id = payload_dict['user_id']
     user = get_object_or_404(Account, id=user_id)
-    decoded_id = 1
-    user = get_object_or_404(Account, id = decoded_id)
+
+    encoded_jwt = jwt.encode({"createdAt": datetime.utcnow().timestamp(), "id": id}, SECRET_KEY, algorithm="HS256")
+    # user = get_object_or_404(Account, id = decoded_id)
+
     email = user.email
 
 

@@ -9,4 +9,16 @@ class HackathonIn(Schema):
     name: str
     description: str
     participants: List[str]
+
+class HackathonOut(Schema):
+    creator: int
+    name: str
+    description: str
+    participants: List[str]
+    imave_cover: str
+    min_participants: int 
+    max_participants: int
+
+class Error(Schema):
+    details: str
     
