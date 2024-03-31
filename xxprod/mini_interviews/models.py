@@ -1,5 +1,5 @@
 from django.db import models
-from users.models import User
+from accounts.models import User
 
 class MiniInterview(models.Model):
     name = models.CharField(max_length = 200, blank = False)
