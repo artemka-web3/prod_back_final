@@ -9,10 +9,18 @@ class Resume(models.Model):
     github = models.CharField(max_length = 200, blank = True)
     hhru = models.CharField(max_length = 200, blank = True)
     linkedin = models.CharField(max_length = 200, blank = True)
-    # telegram = models.CharField(max_length = 200, blank = True)
-    projects = models.TextField(blank = False) 
+    telegram = models.CharField(max_length = 200, blank = True)
+    pdf = models.FileField(upload_to='resumes/')
+
     
+    
+class HardSkillTag(models.Model):
+    resume = models.ForeignKey(Resume, on_delete = models.CASCADE)
+    tag_text = models.CharField(max_length = 100, blank = False)
 
 
+class SoftSkillTag(models.Model):
+    resume = models.ForeignKey(Resume, on_delete = models.CASCADE)
+    tag_text = models.CharField(max_length = 200, blank = False)
 
 
