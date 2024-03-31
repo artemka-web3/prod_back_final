@@ -20,7 +20,7 @@ def signup(request, user: UserProfile):
     if user.city is not None:
         account.city = user.city
     if user.work_experience is not None:
-        account.city = user.work_experience
+        account.work_experience = user.work_experience
     account.save()
     return 201, account
 
