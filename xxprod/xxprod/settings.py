@@ -43,10 +43,12 @@ INSTALLED_APPS = [
     'resumes',
     'softskill_tags',
     'teams',
-    'users',
+    'accounts',
     'vacancies',
 
 ]
+
+AUTH_USER_MODEL = 'accounts.Account'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
