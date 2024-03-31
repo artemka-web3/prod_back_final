@@ -11,6 +11,13 @@ class UserProfile(Schema):
     city: Optional[str] = None
     work_experience: Optional[int] = None
 
+class UserProfileEdit(Schema):
+    username: Optional[str] = None
+    email: Optional[str] = None
+    age: Optional[int] = None
+    city: Optional[str] = None
+    work_experience: Optional[int] = None
+
 class Error(Schema):
     details: str
 
