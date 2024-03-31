@@ -1,5 +1,5 @@
 from django.db import models
-from users.models import User
+from accounts.models import Account
 from hackathons.models import Hackathon
 
 class Resume(models.Model):
