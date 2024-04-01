@@ -273,7 +273,7 @@ def get_team_applies(request, team_id):
     applies = Apply.objects.filter(team = team).all()
     applies_l = []
     for app in applies:
-        applies_l.append({'id': app.id, 'team': app.team.id, 'vac': app.vac.id, 'who_responsed': app.who_responsed.id})
+        applies_l.append({'applier_id': app.id, 'team': app.team.id, 'vac': app.vac.id, 'who_responsed': app.who_responsed.id})
     return 200, applies_l
 
 
