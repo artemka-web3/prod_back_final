@@ -126,57 +126,21 @@ def join_team(request, team_id: int):
 
 
 @team_router.patch('/edit_team', auth = AuthBearer(), response={200: TeamSchemaOut, 401: Error, 400: Error})
-def edit_team(request, id, edited_team: TeamIn):
+def edit_team(request, id: int, edited_team: TeamIn):
     payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
     user_id = payload_dict['user_id']
     user = get_object_or_404(Account, id=user_id)
     team = get_object_or_404(Team, id=id)
-    edited_team_dict = edited_team.dict()
-    if team.creator == user:
-        new_name = edited_team_dict['name']
-        team.name = new_name
-        team.save()
-        for vac in edited_team_dict['vacancies']:
-            # existing vac
-            if vac['id'] == 0:
-                vacancy = Vacancy(team = team, name = vac['name'])
-                vacancy.save()
-                edited_keywords = vac['keywords']
-                for kw in edited_keywords:
-                    Keyword.objects.create(vacancy = vacancy, text = kw)
-            else:
-                vacancy = Vacancy.objects.filter(id = vac['id']).first()
-                vacancy.name = vac['name']
-                vacancy.save()
-                Keyword.objects.filter(vacancy = vacancy).all().delete()
-                keyws = vac['keywords']
-                for k in keyws:
-                    Keyword.objects.create(vacancy = vacancy, text = k) 
+    team.name = edited_team.name
+    team.save()
+    Vacancy.objects.filter(team=team).delete()
+    for vacantion in edited_team.vacancies:
+        vac = Vacancy.objects.create(name=vacantion.name, team=team)
+        for keyword in vacantion.keywords:
+            Keyword.objects.create(vacancy=vac, text=keyword)
+    return 200, team
 
-        all_vacs = Vacancy.objects.filter(team = team).all()
-        all_vacs_l = []
-        edited_vacs_list = edited_team_dict['vacancies']
-        edited_vacs_l = []
-        for v in all_vacs:
-            all_vacs_l.append(v.id)
-        for v in edited_vacs_list:
-            edited_vacs_l.append(v['id'])
-        to_delete_vacs = set(all_vacs_l) - set(edited_vacs_l)
-        for v_id in to_delete_vacs:
-            Vacancy.objects.filter(id = v_id).delete()
 
-        vacancies_l = []
-        for v in all_vacs:
-            keywords = Keyword.objects.filter(vacancy = v).all()
-            keywords_l  = []
-            for i in keywords:
-                keywords_l.append(i.text)
-            vacancies_l.append({"id": v.id,'name': v.name, 'keywords': keywords_l})
-        team_return = {'name': team.name, 'vacancies': vacancies_l}   
-        return 200, team_return
-    else:
-        return 400, {'details': 'you are not the owner of this team so you cant edit this'}
-    
 @team_router.get('/', response = {200: List[TeamSchema], 400: Error}, auth=AuthBearer())
 def get_teams(request, hackathon_id):
     hackathon = get_object_or_404(Hackathon, id = hackathon_id)
