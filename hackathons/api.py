@@ -164,8 +164,9 @@ def get_user_team_in_hackathon(request, id: int):
     teams = Team.objects.filter(hackathon = hackathon).all()
     if teams:
         for t in teams:
-            if user_id in t.team_members:
-                return 200, t
+            for member in t.team_members:
+                if user_id == member.id:
+                    return 200, t
     else: 
         return 404, {'details': "Not found"}
             
