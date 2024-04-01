@@ -89,18 +89,14 @@ def edit_resume(request, resume: ResumeSchema, pdf: Optional[UploadedFile] = Fil
     account = get_object_or_404(Account, id=user_id)
     resume_created = get_object_or_404(Resume, user=account, hackathon=hackathon)
     if resume.tech is not None:
-        hards = HardSkillTag.objects.filter(resume=resume_created).all()
-        for i in range(len(hards)):
-            hards[i].delete()
+        HardSkillTag.objects.filter(resume=resume_created).delete()
         for tag in resume.tech:
             HardSkillTag.objects.create(
                 resume=resume_created,
                 tag_text=tag
             )
     if resume.soft is not None:
-        softs = SoftSkillTag.objects.filter(resume=resume_created).all()
-        for i in range(len(softs)):
-            softs[i].delete()
+        SoftSkillTag.objects.filter(resume=resume_created).delete()
         for tag in resume.soft:
             SoftSkillTag.objects.create(
                 resume=resume_created,
