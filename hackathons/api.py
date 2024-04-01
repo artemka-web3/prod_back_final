@@ -60,21 +60,21 @@ def add_user_to_hackathon(request, hackathon_id: int, email: str):
     me_id = payload_dict['user_id']
     me = get_object_or_404(Account, id=me_id)
     hackathon = get_object_or_404(Hackathon, id=hackathon_id)
+    user_to_add = Account.objects.get(Account, email=email)
     if hackathon.creator == me:
-        if user_to_add not in hackathon.participants.all() and user_to_add != hackathon.creator:
-            encoded_jwt = jwt.encode({"createdAt": datetime.utcnow().timestamp(), "id": hackathon.id}, SECRET_KEY,
-                                     algorithm="HS256")
-            try:
-                send_mail(f"Приглашение в хакатон {hackathon.name}",
-                          f"https://prod.zotov.dev/join-hackaton?hackathon_id={encoded_jwt}", 'sidnevar@yandex.ru',
-                          [email], fail_silently=False)
-            except:
-                pass
-            return 201, hackathon
-        else:
-            return 400, {'detail': "This user is already in hackathon"}
+        if user_to_add and hackathon.creator == user_to_add:
+            return 400, {'details': 'user is creator hackathon'}
+        encoded_jwt = jwt.encode({"createdAt": datetime.utcnow().timestamp(), "id": hackathon.id}, SECRET_KEY,
+                                 algorithm="HS256")
+        try:
+            send_mail(f"Приглашение в хакатон {hackathon.name}",
+                      f"https://prod.zotov.dev/join-hackaton?hackathon_id={encoded_jwt}", 'sidnevar@yandex.ru',
+                      [user_to_add.email], fail_silently=False)
+        except:
+            pass
+        return 201, hackathon
     else:
-        return 403, {'detail': "You are not creator and you can't edit this hackathon"}
+        return 403, {'details': "You are not creator and you can't edit this hackathon"}
 
 @hackathon_router.delete("/{hackathon_id}/remove_user", auth = AuthBearer(), response = {201: HackathonSchema, 401: Error, 404: Error, 403: Error, 400: Error})
 def remove_user_from_hackathon(request, hackathon_id: int, email: str):
