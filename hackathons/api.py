@@ -121,7 +121,7 @@ def edit_hackathons(request, id:int, body: EditHackathon):
         return 403, {'detail': "You are not creator and you can't edit this hackathons"}
 
 @hackathon_router.patch('/{id}/change_photo', auth=AuthBearer(), response={200:HackathonSchema, 401:Error, 400:Error, 403: Error, 404: Error})
-def change_photo(request, image_cover: UploadedFile = File(...)):
+def change_photo(request, id:int, image_cover: UploadedFile = File(...)):
     hackathon = get_object_or_404(Hackathon, id=id)
     payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
     user_id = payload_dict['user_id']
