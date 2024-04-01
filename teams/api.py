@@ -229,14 +229,15 @@ def apply_for_job(request, vac_id):
     payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
     user_id = payload_dict['user_id']
     user = get_object_or_404(Account, id=user_id)
+    Apply.objects.create(vacancy = vacancy, team = vacancy.team, who_responsed = user)
     send_mail(f"{user.email} откликнулся на вакансию",
                       f"Посмотрите новый отклик", 'sidnevar@yandex.ru',
                       [team_owner_email], fail_silently=False)
 
 @team_router.get("/get_applies_for_team", response={200: List[ApplyOut]}, auth=AuthBearer())
 def get_team_applies(request, team_id):
-    vacancy = Vacancy.objects.filter(id = team_id).first()
-    applies = Apply.objects.filter(vacancy = vacancy)
+    team = Team.objects.filter(id = team_id).first()
+    applies = Apply.objects.filter(team = team)
     return 200, applies
 
 
