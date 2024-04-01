@@ -72,7 +72,7 @@ def add_user_to_hackathon(request, hackathon_id: int, email: str):
         try:
             send_mail(f"Приглашение в хакатон {hackathon.name}",
                       f"https://prod.zotov.dev/join-hackaton?hackathon_id={encoded_jwt}", 'sidnevar@yandex.ru',
-                      [user_to_add.email], fail_silently=False)
+                      [email], fail_silently=False)
         except:
             pass
         return 201, hackathon
