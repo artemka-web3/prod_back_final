@@ -146,6 +146,7 @@ def edit_team(request, id: int, edited_team: TeamIn):
             Keyword.objects.create(vacancy=vac, text=keyword)
 
     team_to_return = {
+        'id': team.id,
         'name': team.name,
         'vacancies': vacancies
     }
