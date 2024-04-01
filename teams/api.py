@@ -143,7 +143,7 @@ def edit_team(request, id, edited_team: TeamIn):
         edited_vacs_list = edited_team_dict['vacancies']
         for v in all_vacs:
             all_vacs_l.append(v.id)
-        to_delete_vacs = set(all_vacs_l) - set(edited_vacs_list)
+        to_delete_vacs = set(all_vacs_l) - set(edited_vacs_list['vacancies'])
         for v in to_delete_vacs:
             Vacancy.objects.filter(id = v.id).delete()
 
