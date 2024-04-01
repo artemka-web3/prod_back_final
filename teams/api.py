@@ -134,11 +134,22 @@ def edit_team(request, id: int, edited_team: TeamIn):
     team.name = edited_team.name
     team.save()
     Vacancy.objects.filter(team=team).delete()
+    vacancies = []
     for vacantion in edited_team.vacancies:
         vac = Vacancy.objects.create(name=vacantion.name, team=team)
+        vacancies.append({
+            'id': vac.id,
+            'name': vac.name,
+            'keywords': vacantion.keywords
+        })
         for keyword in vacantion.keywords:
             Keyword.objects.create(vacancy=vac, text=keyword)
-    return 200, team
+
+    team_to_return = {
+        'name': team.name,
+        'vacancies': vacancies
+    }
+    return 200, team_to_return
 
 
 @team_router.get('/', response = {200: List[TeamSchema], 400: Error}, auth=AuthBearer())
