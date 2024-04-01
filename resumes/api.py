@@ -219,7 +219,7 @@ def suggestResumeHH(request, hh_link: SuggestResumeSchema):
 def suggestResumeGithub(request, git_link: SuggestResumeSchema):
     username = git_link.link.replace('https://github.com/', '')
     username = username.replace('github.com/', '')
-    username = username.link.replace('github.com', '')
+    username = username.replace('github.com', '')
     auth = Auth.Token(GITHUB_TOKEN)
     g = Github(auth=auth)
     languages = []
