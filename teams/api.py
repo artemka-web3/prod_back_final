@@ -282,7 +282,7 @@ def get_team_applies(request, team_id):
     return 200, applies_l
 
 
-@team_router.get("/{team_id}", response = {200: TeamById} auth=AuthBearer())
+@team_router.get("/{team_id}", response = {200: TeamById}, auth=AuthBearer())
 def get_team_by_id(request, team_id: int):
     team = get_object_or_404(Team, id = team_id)
     return 200, {'id': team.id, "hackathon": team.hackathon.id, "name": team.name, "creator": team.creator.id, 'team_members': [{'id': member.id, "email": member.email, "name": member.username} for member in team.team_members.all()]}
