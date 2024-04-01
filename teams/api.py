@@ -1,8 +1,8 @@
 from ninja import Router
 from typing import List
-from .schemas import TeamIn, TeamSchema, Successful, Error, SentEmail, TeamSchemaOut, VacancySchemaOut, AddUserToTeam
+from .schemas import TeamIn, TeamSchema, Successful, Error, SentEmail, TeamSchemaOut, VacancySchemaOut, AddUserToTeam, ApplyOut
 from .models import Team
-from vacancies.models import Vacancy, Keyword
+from vacancies.models import Vacancy, Keyword, Apply
 from django.shortcuts import  get_object_or_404
 from accounts.models import Account
 import jwt
@@ -99,11 +99,12 @@ def remove_user_from_team(request, team_id: int, email_schema: AddUserToTeam):
 
 
 @team_router.post('/join_team', auth = AuthBearer(), response={403: Error, 200: TeamSchema, 401: Error})
-def join_team(request, team_id: int):
+def join_team(request, vacancy_id: int):
     payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
     user_id = payload_dict['user_id']
     user = get_object_or_404(Account, id=user_id)
-    team = get_object_or_404(Team, id=team_id)
+    vac = get_object_or_404(Vacancy, id=vacancy_id)
+    team = vac.team
     team.team_members.add(user)
     team.save()
     return 200, team
@@ -136,9 +137,17 @@ def edit_team(request, id, edited_team: TeamIn):
                     Keyword.objects.create(vacancy = v, text = k) 
                 print('not exist')
 
-        vacancies = Vacancy.objects.filter(team = team).all()
+        all_vacs = Vacancy.objects.filter(team = team).all()
+        all_vacs_l = []
+        edited_vacs_list = edited_team_dict['vacancies']
+        for v in all_vacs:
+            all_vacs_l.append(v.id)
+        to_delete_vacs = set(all_vacs_l - edited_vacs_list)
+        for v in to_delete_vacs:
+            Vacancy.objects.filter(id = v.id).delete()
+
         vacancies_l = []
-        for v in vacancies:
+        for v in all_vacs:
             keywords = Keyword.objects.filter(vacancy = v).all()
             keywords_l  = []
             for i in keywords:
@@ -180,3 +189,8 @@ def apply_for_job(request, vac_id):
                       f"Посмотрите новый отклик", 'sidnevar@yandex.ru',
                       [team_owner_email], fail_silently=False)
 
+@team_router.get("/get_applies_for_team", response={200: List[ApplyOut]})
+def get_team_applies(request, vacancy_id):
+    vacancy = Vacancy.objects.filter(id = vacancy_id).first()
+    applies = Apply.objects.filter(vacancy = vacancy)
+    return 200, applies

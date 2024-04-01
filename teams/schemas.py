@@ -31,6 +31,14 @@ class TeamIn(Schema):
     vacancies: List[VacancySchema]
 
 
+
+class ApplyOut(Schema):
+    id: int
+    name: str
+    email: str
+
+
+
 class Successful(Schema):
     success: str
 
