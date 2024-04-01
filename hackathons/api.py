@@ -9,7 +9,7 @@ from ninja import UploadedFile, File
 from authtoken import AuthBearer
 from xxprod.settings import SECRET_KEY
 from django.shortcuts import get_object_or_404
-from .schemas import Error, HackathonOut, EditHackathon
+from .schemas import Error, HackathonOut, EditHackathon, AddUserToHack
 from django.core.mail import send_mail
 import jwt
 
@@ -55,13 +55,13 @@ def list_hackathons(request):
     return 200, hackathons
 
 @hackathon_router.post("/{hackathon_id}/add_user", auth = AuthBearer(), response = {201: HackathonSchema, 401: Error, 404: Error, 403: Error, 400: Error})
-def add_user_to_hackathon(request, hackathon_id: int, email: str):
+def add_user_to_hackathon(request, hackathon_id: int, email_schema: AddUserToHack):
     payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
     me_id = payload_dict['user_id']
     me = get_object_or_404(Account, id=me_id)
     hackathon = get_object_or_404(Hackathon, id=hackathon_id)
     try:
-        user_to_add = Account.objects.get(email=email)
+        user_to_add = Account.objects.get(email=email_schema.email)
     except:
         user_to_add = None
     if hackathon.creator == me:
@@ -80,12 +80,12 @@ def add_user_to_hackathon(request, hackathon_id: int, email: str):
         return 403, {'details': "You are not creator and you can't edit this hackathon"}
 
 @hackathon_router.delete("/{hackathon_id}/remove_user", auth = AuthBearer(), response = {201: HackathonSchema, 401: Error, 404: Error, 403: Error, 400: Error})
-def remove_user_from_hackathon(request, hackathon_id: int, email: str):
+def remove_user_from_hackathon(request, hackathon_id: int, email_schema: AddUserToHack):
     payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
     me_id = payload_dict['user_id']
     me = get_object_or_404(Account, id=me_id)
     hackathon = get_object_or_404(Hackathon, id=hackathon_id)
-    user_to_remove = get_object_or_404(Account, email=email)
+    user_to_remove = get_object_or_404(Account, email=email_schema.email)
     if hackathon.creator == me:
         if user_to_remove != hackathon.creator:
             if user_to_remove in hackathon.participants.all():

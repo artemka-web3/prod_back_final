@@ -56,7 +56,7 @@ def handle_404(request, exc):
     return api.create_response(
         request,
         {"details": "Not found or data is not correct"},
-        status=401
+        status=400
     )
 
 @api.exception_handler(ValidationError)
@@ -64,5 +64,5 @@ def handle_validation_error(request, exc):
     return api.create_response(
         request,
         {"details": f"Some data is not valid: {exc}"},
-        status=401
+        status=400
     )

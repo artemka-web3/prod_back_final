@@ -41,3 +41,5 @@ class EditHackathon(Schema):
 class Error(Schema):
     details: str
     
+class AddUserToHack(Schema):
+    email: str
