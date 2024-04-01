@@ -17,3 +17,11 @@ class Resume(Schema):
 
 class Error(Schema):
     details: str
+
+class SuggestResumeSchema(Router):
+    link: str
+
+class ResumeSuggestion(Schema):
+    bio: Optional[str] = None
+    hards: Optional[List[str]] = None
+    softs: Optional[List[str]] = None

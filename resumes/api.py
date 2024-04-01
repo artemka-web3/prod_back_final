@@ -1,19 +1,26 @@
+import json
 from typing import Optional
 
 from django.shortcuts import get_object_or_404
 from ninja import Router, UploadedFile, File
 import jwt
+from gigachat import GigaChat
 
 from accounts.models import Account
 from authtoken import AuthBearer
 from hackathons.models import Hackathon
 from xxprod.settings import SECRET_KEY
 from .models import Resume, HardSkillTag, SoftSkillTag
-from .schemas import Error
+from .schemas import Error, SuggestResumeSchema, ResumeSuggestion
 from .schemas import Resume as ResumeSchema
+from bs4 import BeautifulSoup
+import requests
+from github import Github
+from github import Auth
 
 router = Router()
-
+GIGA_TOKEN = 'NWFhMjczOWEtMDE2My00ZWE2LTk2Y2EtZTQxMzJjODQ2ZWQzOmZjOTQwYjVhLTMxNTEtNGFjYi1hNjFlLTI2NjA1NDMxMTE2OA=='
+GITHUB_TOKEN = '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'
 
 @router.post('/create/custom', response={201: ResumeSchema, 401:Error, 400: Error, 404: Error, 409: Error}, auth=AuthBearer())
 def create_resume_custom(request, resume: ResumeSchema):
@@ -145,3 +152,81 @@ def edit_resume(request, resume: ResumeSchema):
         resume_created.save()
     result = resume.dict().copy()
     return 200,result
+
+@router.get('/suggest-resume-hh', response={200: ResumeSuggestion, 401:Error, 400: Error, 404: Error}, auth=AuthBearer())
+def suggestResumeHH(request, hh_link: SuggestResumeSchema):
+    cookies = {
+        '__ddg1_': '3iIGwdHMyTVm9wz3yClZ',
+        'hhtoken': 'cFddYrJUjtzrvbbagSXd_Jfp31Ga',
+        'hhuid': 'UZm5g3ww76OapWYKwtkwRA--',
+        '_xsrf': '31cd88f8a95799df7d7641102c68790a',
+        'hhrole': 'anonymous',
+        'regions': '1',
+        'region_clarified': 'NOT_SET',
+        'display': 'desktop',
+        'crypted_hhuid': 'F1631BDEF3A232AC264A90F128EFECB97D3667A1F7A0B397ADCE8D949E38235F',
+        'GMT': '3',
+        'tmr_lvid': 'e54c7bfe2d984ba8340aa554b02f6342',
+        'tmr_lvidTS': '1711981491643',
+        '_ym_uid': '1711981492415424170',
+        '_ym_d': '1711981492',
+        '_ym_isad': '1',
+        'iap.uid': '713458d9f70b4f01812637b43eebe41e',
+        'total_searches': '2',
+        '_ga': 'GA1.2.738586880.1711982128',
+        '_gid': 'GA1.2.968465436.1711982128',
+        'supernova_user_type': 'employer',
+        'tmr_detect': '1%7C1711982151486',
+        '__zzatgib-w-hh': 'MDA0dC0jViV+FmELHw4/aQsbSl1pCENQGC9LXy8pPGpTaH1dIUdWUQkmH0QxJSMJPTxeREl0d1w7aE9jOVURCxIXRF5cVWl1FRpLSiVueCplJS0xViR8SylEXE56LiETeHAkWA8OVy8NPjteLW8PKhMjZHYhP05yhS6wzQ==',
+        'gsscgib-w-hh': 'vn+zRVmAKAcId7K4yGERJA5pihDV9HbRkSIUWAp1OAkrXVb1Lrd3T+cuWwQjeZwSL6zM9lCgBlO0OQrh4It8HcOE4SyG2dSffPcKLoQpB24XJV/rWOuYCh8Hf1w32dsoiPWFb1HMY7JoIR5GN8oQgH0ckYbO5/CvbQV0kF0bszSNWC17gUNr2qZLgeekwkdNilVoBeLCIG3tjpuSBxTtzELI99/uuztokpqr5c39VEgpTkG733ckyk/p1krwoA==',
+        'cfidsgib-w-hh': 'mTj+I+pLwFyAB4rjnoaTiUg+Xz+3mh2aJNGUbjfmgwZC9kAR82jweN7Hzu5TaqVBvc9mFU4AfdHwkPah8Co58MuccH4+ssrkvhqrE9c9Yo8kTiGT3Rv0CmgM1Krf6kJiBHA98KtovPDJ4g+NJp6oYtN3V4Yog+6/8e3ybg==',
+        'cfidsgib-w-hh': 'mTj+I+pLwFyAB4rjnoaTiUg+Xz+3mh2aJNGUbjfmgwZC9kAR82jweN7Hzu5TaqVBvc9mFU4AfdHwkPah8Co58MuccH4+ssrkvhqrE9c9Yo8kTiGT3Rv0CmgM1Krf6kJiBHA98KtovPDJ4g+NJp6oYtN3V4Yog+6/8e3ybg==',
+        'gsscgib-w-hh': 'vn+zRVmAKAcId7K4yGERJA5pihDV9HbRkSIUWAp1OAkrXVb1Lrd3T+cuWwQjeZwSL6zM9lCgBlO0OQrh4It8HcOE4SyG2dSffPcKLoQpB24XJV/rWOuYCh8Hf1w32dsoiPWFb1HMY7JoIR5GN8oQgH0ckYbO5/CvbQV0kF0bszSNWC17gUNr2qZLgeekwkdNilVoBeLCIG3tjpuSBxTtzELI99/uuztokpqr5c39VEgpTkG733ckyk/p1krwoA==',
+        'device_magritte_breakpoint': 's',
+        'device_breakpoint': 's',
+        'fgsscgib-w-hh': 'hZ9gdee09e411d8c7771b8f90c50a05cd132a53e',
+    }
+
+    headers = {
+        'authority': 'hh.ru',
+        'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+        'accept-language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
+        'cache-control': 'max-age=0',
+        'referer': 'https://hh.ru/search/resume',
+        'sec-ch-ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
+        'sec-ch-ua-mobile': '?0',
+        'sec-ch-ua-platform': '"Linux"',
+        'sec-fetch-dest': 'document',
+        'sec-fetch-mode': 'navigate',
+        'sec-fetch-site': 'same-origin',
+        'sec-fetch-user': '?1',
+        'upgrade-insecure-requests': '1',
+        'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    }
+    response = requests.get(
+        hh_link.link,
+        cookies=cookies,
+        headers=headers,
+    )
+    bs = BeautifulSoup(response.text)
+    giga_chat = GigaChat(credentials=GIGA_TOKEN, verify_ssl_certs=False)
+    data = giga_chat.chat('Я тебе предоствалю резюме из hh.ru, тебе нужно выленить из него хард-скилы, софт-скилы, bio. Резюме: ' + bs.text + ' Результат верни в формате JSON-списка без каких-либо пояснений, например, {"bio": "bio", "hards": ["skill1"], "softs": ["skill1"]}. Не повторяй фразы из примера и не дублируй фразы.').choices[0].message.content
+    data = json.loads(data)
+    return 200,data
+
+
+@router.get('/suggest-resume-github', response={200: ResumeSuggestion, 401:Error, 400: Error, 404: Error}, auth=AuthBearer())
+def suggestResumeGithub(request, git_link: SuggestResumeSchema):
+    username = git_link.link.replace('https://github.com/', '')
+    auth = Auth.Token(GITHUB_TOKEN)
+    g = Github(auth=auth)
+    languages = []
+    resume = {}
+    user = g.get_user(username)
+    resume['bio'] = user.bio
+    repos = user.get_repos()
+    for repo in repos:
+        if repo.language and repo.language not in languages:
+            languages.append(repo.language)
+    resume['hards'] = languages
+    return 200,resume
