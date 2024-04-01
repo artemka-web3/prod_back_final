@@ -12,8 +12,8 @@ class HackathonSchema(Schema):
     name: str
     image_cover: str
     description: str
-    min_participants: int
-    max_participants: int
+    min_participants: Optional[int]
+    max_participants: Optional[int]
     participants: List[UserProfile]
 
 class HackathonIn(Schema):

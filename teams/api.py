@@ -123,18 +123,18 @@ def edit_team(request, id, edited_team: TeamIn):
         team.name = new_name
         for vac in edited_team_dict['vacancies']:
             # existing vac
-            vacancy = Vacancy.objects.filter(id = vac['id']).first()
-            if vacancy:
-                print('exist')
-                keywords = Keyword.objects.filter(vacancy = vacancy).all().delete()
+            if vac['id'] == 0:
+                vacancy = Vacancy(team = team, name = vac['name'])
+                vacancy.save()
                 edited_keywords = vac['keywords']
                 for kw in edited_keywords:
                     Keyword.objects.create(vacancy = vacancy, text = kw)
             else:
-                v = Vacancy.objects.create(team = team, name = vac['name'])
+                vacancy = Vacancy.objects.filter(id = vac['id']).first()
+                keywords = Keyword.objects.filter(vacancy = vacancy).all().delete()
                 keyws = vac['keywords']
                 for k in keyws:
-                    Keyword.objects.create(vacancy = v, text = k) 
+                    Keyword.objects.create(vacancy = vacancy, text = k) 
 
         all_vacs = Vacancy.objects.filter(team = team).all()
         all_vacs_l = []
@@ -144,9 +144,9 @@ def edit_team(request, id, edited_team: TeamIn):
             all_vacs_l.append(v.id)
         for v in edited_vacs_list:
             edited_vacs_l.append(v['id'])
-        to_delete_vacs = set(all_vacs_l) - set(edited_vacs_l)
-        for v_id in to_delete_vacs:
-            Vacancy.objects.filter(id = v_id).delete()
+        # to_delete_vacs = set(all_vacs_l) - set(edited_vacs_l)
+        # for v_id in to_delete_vacs:
+            # Vacancy.objects.filter(id = v_id).delete()
 
         vacancies_l = []
         for v in all_vacs:
