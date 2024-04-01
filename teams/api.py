@@ -55,6 +55,7 @@ def delete_team(request, id):
 def accept_application(request, app_id):
     application = get_object_or_404(Apply, id = app_id)
     application.team.team_members.add(application.who_responsed)
+    application.delete()
     return 200, {'success': 'ok'}
 
 @team_router.post('/decline_application', response={200: Successful}, auth = AuthBearer())
