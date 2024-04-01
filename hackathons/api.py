@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from ninja import Router
-from typing import List
+from typing import List, Optional
 from .schemas import HackathonSchema, HackathonIn
 from .models  import Hackathon
 from accounts.models import Account
@@ -98,7 +98,7 @@ def remove_user_from_hackathon(request, hackathon_id: int, email_schema: AddUser
         return 403, {'detail': "You are not creator and you can't edit this hackathon"}
 
 @hackathon_router.patch('/{id}', auth=AuthBearer(), response={200:HackathonSchema, 401:Error, 400:Error, 403: Error, 404: Error})
-def edit_hackathons(request, hackothon_edit: EditHackathon, id:int):
+def edit_hackathons(request, hackothon_edit: EditHackathon, id:int, image_cover: Optional[UploadedFile] = File(None)):
     hackathon = get_object_or_404(Hackathon, id=id)
     payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
     user_id = payload_dict['user_id']
@@ -116,6 +116,8 @@ def edit_hackathons(request, hackothon_edit: EditHackathon, id:int):
         if hackothon_edit.max_participants:
             hackathon.max_participants = hackothon_edit.max_participants
             hackathon.save()
+        if image_cover:
+            hackathon.image_cover.save(image_cover.name, image_cover)
         return 200, hackathon
     else:
         return 403, {'detail': "You are not creator and you can't edit this hackathons"}
