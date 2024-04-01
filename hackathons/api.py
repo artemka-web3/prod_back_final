@@ -157,15 +157,15 @@ def list_myhackathons(request):
     return 200, to_return
 
 @hackathon_router.get('/get_user_team/{id}', auth = AuthBearer(), response={200: TeamSchema, 404: Error})
-def get_user_team_in_hackathon(request, id: int):
+def get_user_team_in_hackathon(request, id: str):
     payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
     user_id = payload_dict['user_id']
-    hackathon = get_object_or_404(Hackathon, id = id)
+    hackathon = get_object_or_404(Hackathon, id = int(id))
     teams = Team.objects.filter(hackathon = hackathon).all()
     if teams:
         for t in teams:
             for member in t.team_members.all():
-                if user_id == member.id:
+                if int(user_id) == int(member.id):
                     return 200, t
     else: 
         return 404, {'details': "Not found"}
