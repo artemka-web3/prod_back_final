@@ -220,7 +220,7 @@ def get_suggest_users_for_specific_vacansion(request, vacansion_id):
     raiting = sorted(list(matching.items()), key= lambda x: list(x)[1], reverse=True)
     result = []
     for i in raiting:
-        result.append(list(i)[0])
+        result.append(int(list(i)[0]))
     return 200, result
 
 
