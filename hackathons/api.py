@@ -60,7 +60,6 @@ def add_user_to_hackathon(request, hackathon_id: int, email: str):
     me_id = payload_dict['user_id']
     me = get_object_or_404(Account, id=me_id)
     hackathon = get_object_or_404(Hackathon, id=hackathon_id)
-    user_to_add = get_object_or_404(Account, email=email)
     if hackathon.creator == me:
         if user_to_add not in hackathon.participants.all() and user_to_add != hackathon.creator:
             encoded_jwt = jwt.encode({"createdAt": datetime.utcnow().timestamp(), "id": hackathon.id}, SECRET_KEY,
@@ -68,7 +67,7 @@ def add_user_to_hackathon(request, hackathon_id: int, email: str):
             try:
                 send_mail(f"Приглашение в хакатон {hackathon.name}",
                           f"https://prod.zotov.dev/join-hackaton?hackathon_id={encoded_jwt}", 'sidnevar@yandex.ru',
-                          [user_to_add.email], fail_silently=False)
+                          [email], fail_silently=False)
             except:
                 pass
             return 201, hackathon
