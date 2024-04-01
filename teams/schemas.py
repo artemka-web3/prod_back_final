@@ -10,9 +10,20 @@ TeamSchema = create_schema(Team)
 
 ApplierSchema = create_schema(Apply)
 
-class ApplierSchema(Schema):
-    applier_id: int
-    vacancy_name: str
+
+class Account(BaseModel):
+    id: int
+    email: str
+    name: str
+
+
+
+class TeamById(Schema):
+    id: int
+    hackathon: int
+    name: str
+    creator: int
+    team_members: List[Account]
 
 
 
