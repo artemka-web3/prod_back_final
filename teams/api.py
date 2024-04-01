@@ -241,15 +241,15 @@ def get_team_applies(request, team_id):
     payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
     user_id = payload_dict['user_id']
     team = Team.objects.filter(id = team_id).first()
-    applies = Apply.objects.filter(team = team)
+    applies = Apply.objects.filter(team = team).all()
     applies_l = []
     for app in applies:
         applies_l.append({'applier_id': app.who_responsed.id, 'vacancy_name': app.vac.name})
     return 200, applies_l
 
 
-@team_router.get("/{team_id}", response={200: TeamById}, auth=AuthBearer())
+@team_router.get("/{team_id}",auth=AuthBearer())
 def get_team_by_id(request, team_id: int):
     team = get_object_or_404(Team, id = team_id)
-    return 200, team
+    return 200, {"id": team.id, "hackathon": team.hackathon.id, "name": team.name, 'creator': team.creator.id, 'team_members': [{"id": t.id, "email": t.email, "name": t.name} for t in team.team_members.all()]}
 
