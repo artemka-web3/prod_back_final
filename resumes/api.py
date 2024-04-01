@@ -17,9 +17,10 @@ from bs4 import BeautifulSoup
 import requests
 from github import Github
 from github import Auth
+from pypdf import PdfReader
 
 router = Router()
-GIGA_TOKEN = 'NWFhMjczOWEtMDE2My00ZWE2LTk2Y2EtZTQxMzJjODQ2ZWQzOmZjOTQwYjVhLTMxNTEtNGFjYi1hNjFlLTI2NjA1NDMxMTE2OA=='
+GIGA_TOKEN = "MGRhZWE5YjQtOTA1OC00NWM5LTliMTMtODAzZDBjZWY3MmRhOmExN2JiZTE0LWFmYjEtNDNhNS05MTFhLTg4ZGQ4YjQ4MmI5ZA=="
 GITHUB_TOKEN = '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'
 
 @router.post('/create/custom', response={201: ResumeSchema, 401:Error, 400: Error, 404: Error, 409: Error}, auth=AuthBearer())
@@ -210,7 +211,7 @@ def suggestResumeHH(request, hh_link: SuggestResumeSchema):
     )
     bs = BeautifulSoup(response.text)
     giga_chat = GigaChat(credentials=GIGA_TOKEN, verify_ssl_certs=False)
-    data = giga_chat.chat('Я тебе предоствалю резюме из hh.ru, тебе нужно выленить из него хард-скилы, софт-скилы, bio. Резюме: ' + bs.text + ' Результат верни в формате JSON-списка без каких-либо пояснений, например, {"bio": "bio", "hards": ["skill1"], "softs": ["skill1"]}. Не повторяй фразы из примера и не дублируй фразы.').choices[0].message.content
+    data = giga_chat.chat('Я тебе предоствалю резюме из hh.ru, тебе нужно вычленить из него хард-скилы, софт-скилы, bio. Резюме: ' + bs.text + ' Результат верни в формате JSON-списка без каких-либо пояснений, например, {"bio": "bio", "hards": ["skill1"], "softs": ["skill1"]}. Не повторяй фразы из примера и не дублируй фразы.').choices[0].message.content
     data = json.loads(data)
     return 200,data
 
@@ -232,3 +233,14 @@ def suggestResumeGithub(request, git_link: SuggestResumeSchema):
             languages.append(repo.language)
     resume['hards'] = languages
     return 200,resume
+
+@router.post('/suggest-resume-pdf', response={200: ResumeSuggestion, 401:Error, 400: Error, 404: Error}, auth=AuthBearer())
+def suggestResumePdf(request, pdf_file_path: SuggestResumeSchema):
+    text = ''
+    reader = PdfReader(pdf_file_path.link)
+    for page in reader.pages:
+        text += page.extract_text()
+    with GigaChat(credentials=GIGA_TOKEN, verify_ssl_certs=False) as giga:
+        data = giga.chat('Я тебе предоствалю резюме, тебе нужно вычленить из него хард-скилы, софт-скилы, bio. Резюме: '+text+' Результат верни в формате JSON-списка без каких-либо пояснений, например, {"bio": "bio", "hards": ["skill1"], "softs": ["skill1"]}. Не повторяй фразы из примера и не дублируй фразы.').choices[0].message.content
+        data = json.loads(data)
+        return 200, data
