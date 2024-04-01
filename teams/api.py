@@ -189,6 +189,8 @@ def get_suggest_users_for_specific_vacansion(request, vacansion_id):
     for user in Account.objects.all():
         if user.id == user_id:
             continue
+        if user.is_organizator:
+            continue
         else:
             count = 0
             try:
