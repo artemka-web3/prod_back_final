@@ -258,9 +258,12 @@ def apply_for_job(request, vac_id):
     user_id = payload_dict['user_id']
     user = get_object_or_404(Account, id=user_id)
     Apply.objects.create(vac = vacancy, team = vacancy.team, who_responsed = user)
-    send_mail(f"{user.email} откликнулся на вакансию",
-                      f"Посмотрите новый отклик", 'sidnevar@yandex.ru',
-                      [team_owner_email], fail_silently=False)
+    try:
+        send_mail(f"{user.email} откликнулся на вакансию",
+                        f"Посмотрите новый отклик", 'sidnevar@yandex.ru',
+                        [team_owner_email], fail_silently=False)
+    except:
+        pass
 
 @team_router.get("/get_applies_for_team", response={200: List[ApplierSchema]}, auth=AuthBearer())
 def get_team_applies(request, team_id):
