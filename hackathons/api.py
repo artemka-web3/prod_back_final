@@ -54,7 +54,7 @@ def list_hackathons(request):
     hackathons = Hackathon.objects.all()
     return 200, hackathons
 
-@hackathon_router.patch('/id', auth=AuthBearer(), response={200:HackathonSchema, 401:Error, 400:Error})
+@hackathon_router.patch('/{id}', auth=AuthBearer(), response={200:HackathonSchema, 401:Error, 400:Error})
 def edit_hackathons(request, hackothon_edit: EditHackathon, id:int):
     hackathon = get_object_or_404(Hackathon, id=id)
     if hackothon_edit.name:

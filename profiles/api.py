@@ -41,7 +41,7 @@ def profile_patch(request, user: UserProfileEdit):
         me.save()
     return 201, me
 
-@router.get('/profiles/user_id', response={200: UserProfile, 401: Error, 404: Error}, auth=AuthBearer())
+@router.get('/profiles/{user_id}', response={200: UserProfile, 401: Error, 404: Error}, auth=AuthBearer())
 def profiles(request, user_id:int):
     user = get_object_or_404(Account, id=user_id)
     return 200, user
