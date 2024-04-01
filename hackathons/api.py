@@ -30,12 +30,16 @@ def create_hackathon(request, body: HackathonIn, image_cover: UploadedFile = Fil
         hackathon.save()
         hackathon.image_cover.save(image_cover.name, image_cover)
         for participant in body_dict['participants']:
-            participant_acc = Account.objects.get(email=participant)
-            if participant_acc:
-                encoded_jwt = jwt.encode({"createdAt": datetime.utcnow().timestamp(), "id": hackathon.id}, SECRET_KEY, algorithm="HS256")
-                try:
-                    send_mail(f"Приглашение в хакатон {hackathon.name}",f"https://prod.zotov.dev/join-hackaton?hackathon_id={encoded_jwt}",'sidnevar@yandex.ru', [participant_acc.email], fail_silently=False)
-                except: pass
+            try:
+                participant_acc = Account.objects.get(email=participant)
+            except:
+                participant_acc = None
+            encoded_jwt = jwt.encode({"createdAt": datetime.utcnow().timestamp(), "id": hackathon.id}, SECRET_KEY, algorithm="HS256")
+            if participant_acc == hackathon.creator:
+                return 400, {'details':'orgs cant be participates'}
+            try:
+                send_mail(f"Приглашение в хакатон {hackathon.name}",f"https://prod.zotov.dev/join-hackaton?hackathon_id={encoded_jwt}",'sidnevar@yandex.ru', [participant], fail_silently=False)
+            except: pass
         return 201, hackathon
     return 403, {'detail': "You are not organizator and you can't create hackathons"}
 
