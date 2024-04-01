@@ -24,7 +24,8 @@ def profile_patch(request, user: UserProfileEdit):
     payload = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
     user_id = payload['user_id']
     me = get_object_or_404(Account, id=user_id)
-    me.email = user.email
+    if user.email:
+        me.email = user.email
     me.age = user.age
     me.city = user.city
     me.username = user.username
