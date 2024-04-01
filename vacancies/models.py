@@ -16,5 +16,5 @@ class Keyword(models.Model):
 
 
 class Apply(models.Model):
-    vacancy = models.ForeignKey(Vacancy, on_delete = models.CASCADE)
+    team = models.ForeignKey(Team, on_delete = models.CASCADE)
     who_responsed = models.ForeignKey(Account, on_delete = models.CASCADE)

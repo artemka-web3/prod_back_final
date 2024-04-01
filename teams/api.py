@@ -1,6 +1,5 @@
 from ninja import Router
 from typing import List
-
 from resumes.models import Resume, SoftSkillTag, HardSkillTag
 from .schemas import TeamIn, TeamSchema, Successful, Error, SentEmail, TeamSchemaOut, VacancySchemaOut, AddUserToTeam, ApplyOut, UserSuggesionForVacansionSchema
 from .models import Team
@@ -144,7 +143,7 @@ def edit_team(request, id, edited_team: TeamIn):
         edited_vacs_list = edited_team_dict['vacancies']
         for v in all_vacs:
             all_vacs_l.append(v.id)
-        to_delete_vacs = set(all_vacs_l - edited_vacs_list)
+        to_delete_vacs = set(all_vacs_l) - set(edited_vacs_list)
         for v in to_delete_vacs:
             Vacancy.objects.filter(id = v.id).delete()
 
@@ -232,8 +231,8 @@ def apply_for_job(request, vac_id):
                       [team_owner_email], fail_silently=False)
 
 @team_router.get("/get_applies_for_team", response={200: List[ApplyOut]}, auth=AuthBearer())
-def get_team_applies(request, vacancy_id):
-    vacancy = Vacancy.objects.filter(id = vacancy_id).first()
+def get_team_applies(request, team_id):
+    vacancy = Vacancy.objects.filter(id = team_id).first()
     applies = Apply.objects.filter(vacancy = vacancy)
     return 200, applies
 
