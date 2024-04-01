@@ -71,7 +71,7 @@ def add_user_to_hackathon(request, hackathon_id: int, user_id: int):
     else:
         return 403, {'detail': "You are not creator and you can't edit this hackathon"}
 
-@hackathon_router.post("/{hackathon_id}/remove_user/{user_id}", auth = AuthBearer(), response = {201: HackathonSchema, 401: Error, 404: Error, 403: Error, 400: Error})
+@hackathon_router.delete("/{hackathon_id}/remove_user/{user_id}", auth = AuthBearer(), response = {201: HackathonSchema, 401: Error, 404: Error, 403: Error, 400: Error})
 def remove_user_from_hackathon(request, hackathon_id: int, user_id: int):
     payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
     me_id = payload_dict['user_id']
