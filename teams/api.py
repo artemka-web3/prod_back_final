@@ -212,9 +212,9 @@ def get_suggest_users_for_specific_vacansion(request, vacansion_id):
             for h in hards:
                 hards_text.append(h.tag_text.lower())
             for keyword in keywords:
-                if keyword.lower() in softs_text:
+                if keyword.text.lower() in softs_text:
                     count += 1
-                if keyword.lower() in hards_text:
+                if keyword.text.lower() in hards_text:
                     count += 1
             matching[user.id] = count
     raiting = sorted(list(matching.items()), key= lambda x: list(x)[1], reverse=True)
