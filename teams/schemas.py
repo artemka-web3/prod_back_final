@@ -1,10 +1,10 @@
 from .models import Team
 from vacancies.models import Apply
 from ninja.orm import create_schema
-from ninja import Schema
 from typing import List
 from pydantic import BaseModel
-from accounts.schemas import UserProfile
+from ninja import Router, Schema, Field
+from typing import Optional
 
 TeamSchema = create_schema(Team)
 
@@ -12,7 +12,7 @@ TeamSchema = create_schema(Team)
 class ApplierSchema(Schema):
     applier_id: int
     team: int
-    vac: int 
+    vac: int
     who_responsed: int
 
 
@@ -48,7 +48,6 @@ class VacancySchemaOut(Schema):
     keywords: List[str]
 
 class TeamSchemaOut(Schema):
-
     id: int
     name: str
     vacancies: List[VacancySchema]
@@ -75,9 +74,19 @@ class Error(Schema):
 
 class SentEmail(Schema):
     link: str
-    
+
+class UserData(Schema):
+    id: int
+    username: str = Field(..., min_length=1, max_length=30, required=True)
+    email: str = Field(..., min_length=1, max_length=60, required=True)
+    password: str = Field(..., min_length=6, required=True)
+    is_organizator: bool
+    age: Optional[int] = None
+    city: Optional[str] = ''
+    work_experience: Optional[int] = None
+
 class UserSuggesionForVacansionSchema(Schema):
-    users: List[UserProfile]
+    users: List[UserData]
 
 class VacansionSuggesionForUserSchema(Schema):
     vacantions: List[VacancySchema]

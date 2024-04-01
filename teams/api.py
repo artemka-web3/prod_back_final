@@ -36,7 +36,7 @@ def create_team(request, hackathon_id: int, body: TeamIn):
         keywords = Keyword.objects.filter(vacancy = v).all()
         keywords_l = [k.text for k in keywords]
         vacancies_l.append({"id":v.id,'name': v.name, 'keywords': keywords_l})
-    team_return = {'name': team.name, 'vacancies': vacancies_l}   
+    team_return = {'id': team.id, 'name': team.name, 'vacancies': vacancies_l}
     return 201, team_return
 
 @team_router.delete("/delete", auth = AuthBearer(), response={201: Successful, 400: Error,  401: Error})
