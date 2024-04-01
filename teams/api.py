@@ -135,6 +135,7 @@ def edit_team(request, id, edited_team: TeamIn):
     if team.creator == user:
         new_name = edited_team_dict['name']
         team.name = new_name
+        team.save()
         for vac in edited_team_dict['vacancies']:
             # existing vac
             if vac['id'] == 0:
@@ -146,7 +147,8 @@ def edit_team(request, id, edited_team: TeamIn):
             else:
                 vacancy = Vacancy.objects.filter(id = vac['id']).first()
                 vacancy.name = vac['name']
-                keywords = Keyword.objects.filter(vacancy = vacancy).all().delete()
+                vacancy.save()
+                Keyword.objects.filter(vacancy = vacancy).all().delete()
                 keyws = vac['keywords']
                 for k in keyws:
                     Keyword.objects.create(vacancy = vacancy, text = k) 
@@ -280,7 +282,7 @@ def apply_for_job(request, vac_id):
     payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
     user_id = payload_dict['user_id']
     user = get_object_or_404(Account, id=user_id)
-    Apply.objects.create(vacancy = vacancy, team = vacancy.team, who_responsed = user)
+    Apply.objects.create(vac = vacancy, team = vacancy.team, who_responsed = user)
     send_mail(f"{user.email} откликнулся на вакансию",
                       f"Посмотрите новый отклик", 'sidnevar@yandex.ru',
                       [team_owner_email], fail_silently=False)
