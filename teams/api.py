@@ -305,6 +305,6 @@ def get_team_by_id(request, team_id: int):
 def merge_teams(request, team1_id:int, team2_id:int):
     team1 = get_object_or_404(Team, id=team1_id)
     team2 = get_object_or_404(Team, id=team2_id)
-    team1.team_members = team1.team_members.all() | team2.team_members.all()
+    team1.team_members.set(team1.team_members.all() | team2.team_members.all())
     team2.delete()
     return 200, team1
