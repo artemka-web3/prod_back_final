@@ -10,18 +10,19 @@ from authtoken import AuthBearer
 from xxprod.settings import SECRET_KEY
 from datetime import datetime
 from django.core.mail import send_mail
-
+from hackathons.models import Hackathon
 
 team_router = Router()
 
 
 @team_router.post("/create", auth = AuthBearer(), response={201: TeamSchemaOut})
-def create_team(request, body: TeamIn):
+def create_team(request, hackathon_id: int, body: TeamIn):
     payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
     user_id = payload_dict['user_id']
     user = get_object_or_404(Account, id=user_id)
     body_dict = body.dict()
-    team = Team(name = body_dict['name'], creator = user)
+    hackathon = get_object_or_404(Hackathon, id = hackathon_id)
+    team = Team(hackathon = hackathon, name = body_dict['name'], creator = user)
     team.save()
     for v in body_dict['vacancies']:
         vacancy = Vacancy(team = team, name = v['name'])
@@ -98,7 +99,7 @@ def remove_user_from_team(request, team_id: int, email_schema: AddUserToTeam):
 
 
 @team_router.post('/join_team', auth = AuthBearer(), response={403: Error, 200: TeamSchema, 401: Error})
-def join_hackathon(request, team_id: int):
+def join_team(request, team_id: int):
     payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
     user_id = payload_dict['user_id']
     user = get_object_or_404(Account, id=user_id)
@@ -108,7 +109,7 @@ def join_hackathon(request, team_id: int):
     return 200, team
 
 
-@team_router.patch('/edit_team', auth = AuthBearer(), response={201: TeamSchemaOut, 401: Error, 400: Error})
+@team_router.patch('/edit_team', auth = AuthBearer(), response={200: TeamSchemaOut, 401: Error, 400: Error})
 def edit_team(request, id, edited_team: TeamIn):
     payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
     user_id = payload_dict['user_id']
@@ -144,13 +145,14 @@ def edit_team(request, id, edited_team: TeamIn):
                 keywords_l.append(i.text)
             vacancies_l.append({"id": v.id,'name': v.name, 'keywords': keywords_l})
         team_return = {'name': team.name, 'vacancies': vacancies_l}   
-        return 201, team_return
+        return 200, team_return
     else:
         return 400, {'details': 'you are not the owner of this team so you cant edit this'}
     
 @team_router.get('/', response = {200: List[TeamSchema], 400: Error})
-def get_teams(request):
-    teams = Team.objects.all()
+def get_teams(request, hackathon_id):
+    hackathon = get_object_or_404(Hackathon, id = hackathon_id)
+    teams = Team.objects.filter(hackathon = hackathon).all()
     return 200, teams
 
 @team_router.get('/team_vacancies', response={200: List[VacancySchemaOut]})
@@ -163,7 +165,7 @@ def get_team_vacancies(request, id):
         keywords_l  = []
         for i in keywords:
             keywords_l.append(i.text)
-        vacancies_list.append({"id": v.id,'name': v.name, 'keywords': keywords_l})
+        vacancies_list.append({"id": v.id, 'name': v.name, 'keywords': keywords_l})
     return 200, vacancies_list
 
 
