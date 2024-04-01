@@ -145,6 +145,7 @@ def edit_team(request, id, edited_team: TeamIn):
                     Keyword.objects.create(vacancy = vacancy, text = kw)
             else:
                 vacancy = Vacancy.objects.filter(id = vac['id']).first()
+                vacancy.name = vac['name']
                 keywords = Keyword.objects.filter(vacancy = vacancy).all().delete()
                 keyws = vac['keywords']
                 for k in keyws:
@@ -158,9 +159,9 @@ def edit_team(request, id, edited_team: TeamIn):
             all_vacs_l.append(v.id)
         for v in edited_vacs_list:
             edited_vacs_l.append(v['id'])
-        # to_delete_vacs = set(all_vacs_l) - set(edited_vacs_l)
-        # for v_id in to_delete_vacs:
-            # Vacancy.objects.filter(id = v_id).delete()
+        to_delete_vacs = set(all_vacs_l) - set(edited_vacs_l)
+        for v_id in to_delete_vacs:
+            Vacancy.objects.filter(id = v_id).delete()
 
         vacancies_l = []
         for v in all_vacs:
