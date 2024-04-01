@@ -194,3 +194,10 @@ def get_team_applies(request, vacancy_id):
     vacancy = Vacancy.objects.filter(id = vacancy_id).first()
     applies = Apply.objects.filter(vacancy = vacancy)
     return 200, applies
+
+
+@team_router.get("/{team_id}", response={200: TeamSchema})
+def get_team_by_id(request, team_id: int):
+    team = get_object_or_404(Team, id = team_id)
+
+    return 200, team
