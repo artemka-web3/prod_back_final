@@ -85,6 +85,7 @@ class UserData(Schema):
     city: Optional[str] = ''
     work_experience: Optional[int] = None
     keywords: List[str]
+    bio: str
 
 class UserSuggesionForVacansionSchema(Schema):
     users: List[UserData]

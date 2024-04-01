@@ -216,6 +216,9 @@ def get_suggest_users_for_specific_vacansion(request, vacansion_id):
     result = {'users': []}
     for i in raiting:
         user = get_object_or_404(Account, id=int(list(i)[0]))
+        bio = ''
+        try: bio = get_object_or_404(Resume, user=user, hackathon=vacancy.team.hackathon).bio
+        except: pass
         user_schema = {
             'id': user.id,
             'username': user.username,
@@ -225,7 +228,8 @@ def get_suggest_users_for_specific_vacansion(request, vacansion_id):
             'age': user.age,
             'city': user.city,
             'work_experience': user.work_experience,
-            'keywords': list(i)[1]
+            'keywords': list(i)[1],
+            'bio': bio
         }
         result['users'].append(user_schema)
     return 200, result
