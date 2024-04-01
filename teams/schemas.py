@@ -1,14 +1,34 @@
 from .models import Team
 from ninja.orm import create_schema
 from ninja import Schema
-from  typing import List
+from typing import List
+from pydantic import BaseModel
 
 TeamSchema = create_schema(Team)
 
+
+
+
+class VacancySchema(BaseModel):
+    id: int
+    name: str
+    keywords: List[str]
+
+class AddUserToTeam(Schema):
+    email: str
+
+class VacancySchemaOut(Schema):
+    id: int
+    name: str
+    keywords: List[str]
+
+class TeamSchemaOut(Schema):
+    name: str
+    vacancies: List[VacancySchema]
+
 class TeamIn(Schema):
     name: str
-    creator_id: int
-    vacancies_ids: List[int]
+    vacancies: List[VacancySchema]
 
 
 class Successful(Schema):
