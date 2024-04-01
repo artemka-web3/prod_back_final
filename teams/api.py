@@ -191,7 +191,11 @@ def get_suggest_users_for_specific_vacansion(request, vacansion_id):
             continue
         else:
             count = 0
-            resume = get_object_or_404(Resume, hackathon=vacancy.team.hackathon, user_id=user.id)
+            try:
+                resume = get_object_or_404(Resume, hackathon=vacancy.team.hackathon, user_id=user.id)
+            except:
+                matching[user.id] = 0
+                continue
             teams = Team.objects.filter(hackathon=vacancy.team.hackathon)
             user_already_in_team = False
             for team in teams:
