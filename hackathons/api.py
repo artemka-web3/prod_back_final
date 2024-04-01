@@ -9,7 +9,7 @@ from ninja import UploadedFile, File
 from authtoken import AuthBearer
 from xxprod.settings import SECRET_KEY
 from django.shortcuts import get_object_or_404
-from .schemas import Error, HackathonOut
+from .schemas import Error, HackathonOut, EditHackathon
 from django.core.mail import send_mail
 import jwt
 
@@ -53,6 +53,23 @@ def join_hackathon(request, hackathon_id: int):
 def list_hackathons(request):
     hackathons = Hackathon.objects.all()
     return 200, hackathons
+
+@hackathon_router.patch('/id', auth=AuthBearer(), response={200:HackathonSchema, 401:Error, 400:Error})
+def edit_hackathons(request, hackothon_edit: EditHackathon, id:int):
+    hackathon = get_object_or_404(Hackathon, id=id)
+    if hackothon_edit.name:
+        hackathon.name = hackothon_edit.name
+        hackathon.save()
+    if hackothon_edit.description:
+        hackathon.description = hackothon_edit.description
+        hackathon.save()
+    if hackothon_edit.min_participants:
+        hackathon.min_participants = hackothon_edit.min_participants
+        hackathon.save()
+    if hackothon_edit.max_participants:
+        hackathon.max_participants = hackothon_edit.max_participants
+        hackathon.save()
+    return 200, hackathon
 
 @my_hackathon_router.get("/", auth = AuthBearer(), response = {401: Error, 200: List[HackathonSchema]})
 def list_myhackathons(request):

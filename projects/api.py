@@ -21,7 +21,7 @@ def create_project(request, project: Project, image_cover: UploadedFile = File(.
     new_project.image_cover.save(image_cover.name, image_cover)
     return 201, new_project
 
-@router.get('/', response={200: List[Project], 401: Error})
+@router.get('/', response={200: List[Project], 401: Error}, auth=AuthBearer())
 def get_projects(request, resume_id: int):
     resume = get_object_or_404(Resume, id=resume_id)
     projects = ProjectModel.objects.filter(resume=resume)
