@@ -8,7 +8,10 @@ from accounts.schemas import UserProfile
 
 TeamSchema = create_schema(Team)
 
-ApplierSchema = create_schema(Apply)
+
+class ApplierSchema(Schema):
+    applier_id: int
+    vacancy_name: str
 
 
 class Account(BaseModel):
