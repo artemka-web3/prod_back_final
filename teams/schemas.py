@@ -62,4 +62,4 @@ class UserSuggesionForVacansionSchema(Schema):
     users: List[UserProfile]
 
 class VacansionSuggesionForUserSchema(Schema):
-    users: List[VacancySchema]
+    vacantions: List[VacancySchema]
