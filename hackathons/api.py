@@ -60,7 +60,10 @@ def add_user_to_hackathon(request, hackathon_id: int, email: str):
     me_id = payload_dict['user_id']
     me = get_object_or_404(Account, id=me_id)
     hackathon = get_object_or_404(Hackathon, id=hackathon_id)
-    user_to_add = Account.objects.get(email=email)
+    try:
+        user_to_add = Account.objects.get(email=email)
+    except:
+        user_to_add = None
     if hackathon.creator == me:
         if user_to_add and hackathon.creator == user_to_add:
             return 400, {'details': 'user is creator hackathon'}
