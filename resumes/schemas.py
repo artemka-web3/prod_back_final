@@ -18,7 +18,7 @@ class Resume(Schema):
 class Error(Schema):
     details: str
 
-class SuggestResumeSchema(Router):
+class SuggestResumeSchema(Schema):
     link: str
 
 class ResumeSuggestion(Schema):
