@@ -4,13 +4,26 @@ from ninja.orm import create_schema
 from ninja import Schema
 from typing import List
 from pydantic import BaseModel
+from accounts.models  import Account
 
 TeamSchema = create_schema(Team)
 
 ApplierSchema = create_schema(Apply)
 
 
+class Account(BaseModel):
+    id: int
+    email: str
+    name: str
 
+
+
+class TeamById(Schema):
+    id: int
+    hackathon: int
+    name: str
+    creator: int
+    team_members: List[Account]
 
 
 class VacancySchema(BaseModel):

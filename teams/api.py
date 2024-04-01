@@ -1,7 +1,7 @@
 from ninja import Router
 from typing import List
 from resumes.models import Resume, SoftSkillTag, HardSkillTag
-from .schemas import TeamIn, TeamSchema, Successful, Error, SentEmail, TeamSchemaOut, VacancySchemaOut, AddUserToTeam, ApplyOut, UserSuggesionForVacansionSchema, ApplierSchema
+from .schemas import TeamIn, TeamSchema, Successful, Error, TeamById, TeamSchemaOut, VacancySchemaOut, AddUserToTeam, ApplyOut, UserSuggesionForVacansionSchema, ApplierSchema
 from .models import Team
 from vacancies.models import Vacancy, Keyword, Apply
 from django.shortcuts import  get_object_or_404
@@ -248,7 +248,7 @@ def get_team_applies(request, team_id):
     return 200, applies_l
 
 
-@team_router.get("/{team_id}", response={200: TeamSchema}, auth=AuthBearer())
+@team_router.get("/{team_id}", response={200: TeamById}, auth=AuthBearer())
 def get_team_by_id(request, team_id: int):
     team = get_object_or_404(Team, id = team_id)
     return 200, team
