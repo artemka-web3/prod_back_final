@@ -17,11 +17,13 @@ def signup(request, user: UserProfile):
     account = Account.objects.create_user(email=user.email, username=user.username, password=user.password, is_organizator=user.is_organizator)
     if user.age is not None:
         account.age = user.age
+        account.save()
     if user.city is not None:
         account.city = user.city
+        account.save()
     if user.work_experience is not None:
         account.work_experience = user.work_experience
-    account.save()
+        account.save()
     return 201, account
 
 

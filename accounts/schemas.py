@@ -8,7 +8,7 @@ class UserProfile(Schema):
     password: str = Field(..., min_length=6, required=True)
     is_organizator: bool
     age: Optional[int] = None
-    city: Optional[str] = None
+    city: Optional[str] = ''
     work_experience: Optional[int] = None
 
 class Error(Schema):

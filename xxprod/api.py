@@ -8,6 +8,8 @@ from authtoken import InvalidToken
 from hackathons.api import hackathon_router, my_hackathon_router
 from profiles.api import router as profiles_router
 from teams.api import team_router
+from projects.api import router as projects_router
+from resumes.api import router as resumes_router
 
 api = NinjaAPI(
     title="Team Search",
@@ -19,6 +21,8 @@ api.add_router('/hackathons/', hackathon_router)
 api.add_router('/myhackathons/', my_hackathon_router)
 api.add_router('/', profiles_router)
 api.add_router('/teams/', team_router)
+api.add_router('/projects/', projects_router)
+api.add_router('/resumes/', resumes_router)
 
 
 
@@ -48,7 +52,7 @@ def invalid_token(request, exc):
     )
 
 @api.exception_handler(Http404)
-def invalid_token(request, exc):
+def handle_404(request, exc):
     return api.create_response(
         request,
         {"details": "Not found or data is not correct"},
@@ -56,7 +60,7 @@ def invalid_token(request, exc):
     )
 
 @api.exception_handler(ValidationError)
-def invalid_token(request, exc):
+def handle_validation_error(request, exc):
     return api.create_response(
         request,
         {"details": f"Some data is not valid: {exc}"},

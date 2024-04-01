@@ -30,14 +30,14 @@ def profile_patch(request, user: UserProfileEdit):
     if user.age is not None:
         me.age = user.age
         me.save()
-    if user.city is not None:
+    if user.city != '':
         me.city = user.city
         me.save()
     if user.username is not None:
         me.username = user.username
         me.save()
     if user.work_experience is not None:
-        me.work_exp = user.work_experience
+        me.work_experience = user.work_experience
         me.save()
     return 201, me
 

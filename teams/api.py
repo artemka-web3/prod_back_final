@@ -10,7 +10,6 @@ from authtoken import AuthBearer
 from xxprod.settings import SECRET_KEY
 from datetime import datetime
 from django.core.mail import send_mail
-import smtplib as smtp
 
 
 team_router = Router()
@@ -49,7 +48,7 @@ def invite_user(request, team_id: int, invited_user_id: int):
     encoded_jwt = jwt.encode({"createdAt": datetime.utcnow().timestamp(), "id": team_id}, SECRET_KEY, algorithm="HS256")
     team = Team.objects.get(id = team_id)
     if team.creator == user:
-        send_mail("Приглашение в команду", f"http://158.160.116.151:8000/accept-invitation?team_id_hash={encoded_jwt}", 'sidnevar@yandex.ru', [invited_user.email], fail_silently=False)
+        send_mail("Приглашение в команду", f"(ссылка не та) http://158.160.116.151:8000/accept-invitation?team_id_hash={encoded_jwt}", 'sidnevar@yandex.ru', [invited_user.email], fail_silently=False)
         return 201, {'link': f"http://158.160.116.151:8000/accept-invitation?team_id_hash={encoded_jwt}"}
     else:
         return 400, {'details': 'you are not the owner of this team'}

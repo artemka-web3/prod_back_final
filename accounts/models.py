@@ -38,9 +38,9 @@ class Account(AbstractBaseUser):
     email = models.EmailField(verbose_name="email", max_length=60, unique=True)
     username = models.CharField(max_length=30)
     age = models.IntegerField(blank=True, null=True)
-    city = models.CharField(max_length=100, blank=True, null=True)
-    work_exp = models.IntegerField(blank=True, null=True)
-    is_organizator = models.CharField(max_length=100, blank=False)
+    city = models.CharField(max_length=100, blank=True, default='')
+    work_experience = models.IntegerField(blank=True, null=True)
+    is_organizator = models.BooleanField(blank=False)
     date_joined = models.DateTimeField(
         verbose_name='date joined', auto_now_add=True)
     last_login = models.DateTimeField(verbose_name='last login', auto_now=True)
