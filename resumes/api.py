@@ -15,8 +15,8 @@ from .schemas import Resume as ResumeSchema
 router = Router()
 
 
-@router.post('/create', response={201: ResumeSchema, 401:Error, 400: Error, 404: Error, 409: Error}, auth=AuthBearer())
-def create_resume(request, resume: ResumeSchema, pdf: Optional[UploadedFile] = File(None)):
+@router.post('/create/custom', response={201: ResumeSchema, 401:Error, 400: Error, 404: Error, 409: Error}, auth=AuthBearer())
+def create_resume_custom(request, resume: ResumeSchema):
     payload = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
     user_id = payload['user_id']
     hackathon = get_object_or_404(Hackathon, id=resume.hackathon_id)
@@ -51,10 +51,36 @@ def create_resume(request, resume: ResumeSchema, pdf: Optional[UploadedFile] = F
         resume_created.user = account
         resume_created.save()
     result = resume.dict().copy()
-    if pdf is not None:
-        resume_created.pdf.save(pdf.name, pdf)
-        result['pdf_link'] = resume_created.pdf
     return 201,result
+
+@router.post('/create/pdf', response={201: ResumeSchema, 401: Error, 400: Error, 404: Error, 409: Error},auth=AuthBearer())
+def create_resume_pdf_upload(request, resume: ResumeSchema, pdf: UploadedFile = File(...)):
+    payload = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
+    user_id = payload['user_id']
+    hackathon = get_object_or_404(Hackathon, id=resume.hackathon_id)
+    account = get_object_or_404(Account, id=user_id)
+    resume_created = Resume.objects.filter(user=account, hackathon=hackathon)
+    result = {}
+    resume_created.pdf.save(pdf.name, pdf)
+    result['pdf_link'] = resume_created.pdf
+    result['bio'] = resume_created.bio
+    result['hackathon_id'] = resume_created.hackathon.id
+    result['github'] = resume_created.github
+    result['hh'] = resume_created.hhru
+    result['telegram'] = resume_created.telegram
+    result['personal_website'] = resume_created.personal_website
+    result['pdf_link'] = resume_created.pdf
+    techs = HardSkillTag.objects.filter(resume=resume_created)
+    ss = SoftSkillTag.objects.filter(resume=resume_created)
+    hards = []
+    softs = []
+    for tech in techs:
+        hards.append(tech.tag_text)
+    for soft in ss:
+        softs.append(soft.tag_text)
+    result['tech'] = hards
+    result['soft'] = softs
+    return 200, result
 
 @router.get('/get', response={200: ResumeSchema, 401:Error, 400: Error, 404: Error}, auth=AuthBearer())
 def get_resume(request, user_id: int, hackathon_id:int):
@@ -82,7 +108,7 @@ def get_resume(request, user_id: int, hackathon_id:int):
     return 200, result
 
 @router.patch('/edit', response={200: ResumeSchema, 401:Error, 400: Error, 404: Error}, auth=AuthBearer())
-def edit_resume(request, resume: ResumeSchema, pdf: Optional[UploadedFile] = File(None)):
+def edit_resume(request, resume: ResumeSchema):
     payload = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
     user_id = payload['user_id']
     hackathon = get_object_or_404(Hackathon, id=resume.hackathon_id)
@@ -116,7 +142,4 @@ def edit_resume(request, resume: ResumeSchema, pdf: Optional[UploadedFile] = Fil
         resume_created.user = account
         resume_created.save()
     result = resume.dict().copy()
-    if pdf is not None:
-        resume_created.pdf.save(pdf.name, pdf)
-        result['pdf_link'] = resume_created.pdf
     return 200,result
