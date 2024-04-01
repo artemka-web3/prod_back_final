@@ -131,6 +131,9 @@ def edit_resume(request, resume: ResumeSchema):
     if resume.github != '':
         resume_created.github = resume.github
         resume_created.save()
+    if resume.bio != '':
+        resume_created.bio = resume.bio
+        resume_created.save()
     if resume.hh != '':
         resume_created.hhru = resume.hh
         resume_created.save()
@@ -138,8 +141,7 @@ def edit_resume(request, resume: ResumeSchema):
         resume_created.telegram = resume.telegram
         resume_created.save()
     if resume.personal_website != '':
-        account = get_object_or_404(Account, id=user_id)
-        resume_created.user = account
+        resume_created.personal_website = resume.personal_website
         resume_created.save()
     result = resume.dict().copy()
     return 200,result
