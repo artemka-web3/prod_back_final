@@ -54,7 +54,22 @@ def list_hackathons(request):
     hackathons = Hackathon.objects.all()
     return 200, hackathons
 
-#@hackathon_router.post("/add_user/id", auth = AuthBearer())
+@hackathon_router.post("/{hackathon_id}/add_user/{user_id}", auth = AuthBearer(), response = {201: HackathonSchema, 401: Error, 404: Error, 403: Error, 400: Error})
+def add_user_to_hackathon(request, hackathon_id: int, user_id: int):
+    payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
+    user_id = payload_dict['user_id']
+    me = get_object_or_404(Account, id=user_id)
+    hackathon = get_object_or_404(Hackathon, id=hackathon_id)
+    user_to_add = get_object_or_404(Account, id=user_id)
+    if hackathon.creator == me:
+        if user_to_add not in hackathon.participants.all() and user_to_add != hackathon.creator:
+            hackathon.participants.add(user_to_add)
+            hackathon.save()
+            return 201, hackathon
+        else:
+            return 400, {'detail': "This user is already in hackathon"}
+    else:
+        return 403, {'detail': "You are not creator and you can't edit this hackathon"}
 
 @hackathon_router.patch('/{id}', auth=AuthBearer(), response={200:HackathonSchema, 401:Error, 400:Error, 403: Error, 404: Error})
 def edit_hackathons(request, hackothon_edit: EditHackathon, id:int):
@@ -77,7 +92,7 @@ def edit_hackathons(request, hackothon_edit: EditHackathon, id:int):
             hackathon.save()
         return 200, hackathon
     else:
-        return 403, {'detail': "You are not creator and you can't edit it hackathons"}
+        return 403, {'detail': "You are not creator and you can't edit this hackathons"}
 
 @hackathon_router.get('/{id}', auth=AuthBearer(), response={200:HackathonSchema, 401:Error, 400:Error, 404: Error})
 def get_specific_hackathon(request, id:int):
