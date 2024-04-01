@@ -245,7 +245,7 @@ def get_suggest_vacansions_for_specific_user(request, resume_id):
     raiting = sorted(list(vacansions_matching.items()), key=lambda x: list(x)[1], reverse=True)
     result = {'vacantions': []}
     for i in raiting:
-        vac = get_object_or_404(Vacancy, int(list(i)[0]))
+        vac = get_object_or_404(Vacancy, id=int(list(i)[0]))
         kws = [j.text for j in Keyword.objects.filter(vacancy=vac).all()]
         result['vacantions'].append({
             "id": vac.id,
