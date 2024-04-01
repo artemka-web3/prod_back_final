@@ -224,7 +224,7 @@ def get_suggest_users_for_specific_vacansion(request, vacansion_id):
     return 200, result
 
 @team_router.get('/suggest_vacansions_for_specific_user/{resume_id}', response={200: VacansionSuggesionForUserSchema, 404: Error}, auth=AuthBearer())
-def get_suggest_users_for_specific_vacansion(request, resume_id):
+def get_suggest_vacansions_for_specific_user(request, resume_id):
     resume = get_object_or_404(Resume, id=resume_id)
     softs = SoftSkillTag.objects.filter(resume=resume).all()
     hards = HardSkillTag.objects.filter(resume=resume).all()
