@@ -131,12 +131,10 @@ def edit_team(request, id, edited_team: TeamIn):
                 for kw in edited_keywords:
                     Keyword.objects.create(vacancy = vacancy, text = kw)
             else:
-                v = Vacancy(team = team, name = vac['name'])
-                v.save()
+                v = Vacancy.objects.create(team = team, name = vac['name'])
                 keyws = vac['keywords']
                 for k in keyws:
                     Keyword.objects.create(vacancy = v, text = k) 
-                print('not exist')
 
         all_vacs = Vacancy.objects.filter(team = team).all()
         all_vacs_l = []
