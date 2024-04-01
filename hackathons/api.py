@@ -54,21 +54,34 @@ def list_hackathons(request):
     hackathons = Hackathon.objects.all()
     return 200, hackathons
 
-@hackathon_router.patch('/{id}', auth=AuthBearer(), response={200:HackathonSchema, 401:Error, 400:Error})
+#@hackathon_router.post("/add_user/id", auth = AuthBearer())
+
+@hackathon_router.patch('/{id}', auth=AuthBearer(), response={200:HackathonSchema, 401:Error, 400:Error, 403: Error, 404: Error})
 def edit_hackathons(request, hackothon_edit: EditHackathon, id:int):
     hackathon = get_object_or_404(Hackathon, id=id)
-    if hackothon_edit.name:
-        hackathon.name = hackothon_edit.name
-        hackathon.save()
-    if hackothon_edit.description:
-        hackathon.description = hackothon_edit.description
-        hackathon.save()
-    if hackothon_edit.min_participants:
-        hackathon.min_participants = hackothon_edit.min_participants
-        hackathon.save()
-    if hackothon_edit.max_participants:
-        hackathon.max_participants = hackothon_edit.max_participants
-        hackathon.save()
+    payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
+    user_id = payload_dict['user_id']
+    user = get_object_or_404(Account, id=user_id)
+    if hackathon.creator == user:
+        if hackothon_edit.name:
+            hackathon.name = hackothon_edit.name
+            hackathon.save()
+        if hackothon_edit.description:
+            hackathon.description = hackothon_edit.description
+            hackathon.save()
+        if hackothon_edit.min_participants:
+            hackathon.min_participants = hackothon_edit.min_participants
+            hackathon.save()
+        if hackothon_edit.max_participants:
+            hackathon.max_participants = hackothon_edit.max_participants
+            hackathon.save()
+        return 200, hackathon
+    else:
+        return 403, {'detail': "You are not creator and you can't edit it hackathons"}
+
+@hackathon_router.get('/{id}', auth=AuthBearer(), response={200:HackathonSchema, 401:Error, 400:Error, 404: Error})
+def get_specific_hackathon(request, id:int):
+    hackathon = get_object_or_404(Hackathon, id=id)
     return 200, hackathon
 
 @my_hackathon_router.get("/", auth = AuthBearer(), response = {401: Error, 200: List[HackathonSchema]})
