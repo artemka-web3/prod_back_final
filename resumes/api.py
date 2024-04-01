@@ -153,7 +153,7 @@ def edit_resume(request, resume: ResumeSchema):
     result = resume.dict().copy()
     return 200,result
 
-@router.get('/suggest-resume-hh', response={200: ResumeSuggestion, 401:Error, 400: Error, 404: Error}, auth=AuthBearer())
+@router.post('/suggest-resume-hh', response={200: ResumeSuggestion, 401:Error, 400: Error, 404: Error}, auth=AuthBearer())
 def suggestResumeHH(request, hh_link: SuggestResumeSchema):
     cookies = {
         '__ddg1_': '3iIGwdHMyTVm9wz3yClZ',
@@ -215,9 +215,11 @@ def suggestResumeHH(request, hh_link: SuggestResumeSchema):
     return 200,data
 
 
-@router.get('/suggest-resume-github', response={200: ResumeSuggestion, 401:Error, 400: Error, 404: Error}, auth=AuthBearer())
+@router.post('/suggest-resume-github', response={200: ResumeSuggestion, 401:Error, 400: Error, 404: Error}, auth=AuthBearer())
 def suggestResumeGithub(request, git_link: SuggestResumeSchema):
     username = git_link.link.replace('https://github.com/', '')
+    username = username.replace('github.com/', '')
+    username = username.link.replace('github.com', '')
     auth = Auth.Token(GITHUB_TOKEN)
     g = Github(auth=auth)
     languages = []
