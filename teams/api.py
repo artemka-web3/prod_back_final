@@ -218,9 +218,9 @@ def get_suggest_users_for_specific_vacansion(request, vacansion_id):
                     count += 1
             matching[user.id] = count
     raiting = sorted(list(matching.items()), key= lambda x: list(x)[1], reverse=True)
-    result = []
+    result = {'ids': []}
     for i in raiting:
-        result.append(int(list(i)[0]))
+        result['ids'].append(int(list(i)[0]))
     return 200, result
 
 
