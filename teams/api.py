@@ -184,11 +184,11 @@ def get_suggest_users_for_specific_vacansion(request, vacansion_id):
         if user.is_organizator:
             continue
         else:
-            count = 0
+            matched = []
             try:
                 resume = get_object_or_404(Resume, hackathon=vacancy.team.hackathon, user_id=user.id)
             except:
-                matching[user.id] = 0
+                matching[user.id] = []
                 continue
             teams = Team.objects.filter(hackathon=vacancy.team.hackathon)
             user_already_in_team = False
@@ -207,14 +207,26 @@ def get_suggest_users_for_specific_vacansion(request, vacansion_id):
                 hards_text.append(h.tag_text.lower())
             for keyword in keywords:
                 if keyword.text.lower() in softs_text:
-                    count += 1
+                    matched.append(keyword.text.lower())
                 if keyword.text.lower() in hards_text:
-                    count += 1
-            matching[user.id] = count
-    raiting = sorted(list(matching.items()), key= lambda x: list(x)[1], reverse=True)
+                    matched.append(keyword.text.lower())
+            matching[user.id] = matched
+    raiting = sorted(list(matching.items()), key= lambda x: len(list(x)[1]), reverse=True)
     result = {'users': []}
     for i in raiting:
-        result['users'].append(get_object_or_404(Account, id=int(list(i)[0])))
+        user = get_object_or_404(Account, id=int(list(i)[0]))
+        user_schema = {
+            'id': user.id,
+            'username': user.username,
+            'email': user.email,
+            'password': user.password,
+            'is_organizator': user.is_organizator,
+            'age': user.age,
+            'city': user.city,
+            'work_experience': user.work_experience,
+            'keywords': list(i)[1]
+        }
+        result['users'].append(user_schema)
     return 200, result
 
 @team_router.get('/suggest_vacansions_for_specific_user/{resume_id}', response={200: VacansionSuggesionForUserSchema, 404: Error}, auth=AuthBearer())
