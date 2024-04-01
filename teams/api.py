@@ -192,6 +192,13 @@ def get_suggest_users_for_specific_vacansion(request, vacansion_id):
         else:
             count = 0
             resume = get_object_or_404(Resume, hackathon=vacancy.team.hackathon, user_id=user.id)
+            teams = Team.objects.filter(hackathon=vacancy.team.hackathon)
+            user_already_in_team = False
+            for team in teams:
+                if user in team.team_members.all():
+                    user_already_in_team = True
+            if user_already_in_team:
+                continue
             softs = SoftSkillTag.objects.filter(resume = resume).all()
             softs_text = []
             for s in softs:
