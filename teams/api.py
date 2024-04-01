@@ -1,6 +1,8 @@
 from ninja import Router
 from typing import List
-from .schemas import TeamIn, TeamSchema, Successful, Error, SentEmail, TeamSchemaOut, VacancySchemaOut, AddUserToTeam, ApplyOut
+
+from resumes.models import Resume, SoftSkillTag, HardSkillTag
+from .schemas import TeamIn, TeamSchema, Successful, Error, SentEmail, TeamSchemaOut, VacancySchemaOut, AddUserToTeam, ApplyOut, UserSuggesionForVacansionSchema
 from .models import Team
 from vacancies.models import Vacancy, Keyword, Apply
 from django.shortcuts import  get_object_or_404
@@ -158,27 +160,60 @@ def edit_team(request, id, edited_team: TeamIn):
     else:
         return 400, {'details': 'you are not the owner of this team so you cant edit this'}
     
-@team_router.get('/', response = {200: List[TeamSchema], 400: Error})
+@team_router.get('/', response = {200: List[TeamSchema], 400: Error}, auth=AuthBearer())
 def get_teams(request, hackathon_id):
     hackathon = get_object_or_404(Hackathon, id = hackathon_id)
     teams = Team.objects.filter(hackathon = hackathon).all()
     return 200, teams
 
-@team_router.get('/team_vacancies', response={200: List[VacancySchemaOut]})
+@team_router.get('/team_vacancies', response={200: List[VacancySchemaOut]}, auth=AuthBearer())
 def get_team_vacancies(request, id):
     team = Team.objects.filter(id = id).first()
     vacancies = Vacancy.objects.filter(team = team).all()
     vacancies_list = []
     for v in vacancies:
         keywords = Keyword.objects.filter(vacancy = v).all()
-        keywords_l  = []
+        keywords_l = []
         for i in keywords:
             keywords_l.append(i.text)
         vacancies_list.append({"id": v.id, 'name': v.name, 'keywords': keywords_l})
     return 200, vacancies_list
 
+@team_router.get('/suggest_users_for_specific_vacansion/{vacansion_id}', response={200: UserSuggesionForVacansionSchema, 404: Error}, auth=AuthBearer())
+def get_suggest_users_for_specific_vacansion(request, vacansion_id):
+    payload = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
+    user_id = payload['user_id']
+    keywords = Keyword.objects.filter(vacancy_id = vacansion_id).all()
+    vacancy = get_object_or_404(Vacancy, id=vacansion_id)
+    matching = {}
+    for user in Account.objects.all():
+        if user.id == user_id:
+            continue
+        else:
+            count = 0
+            resume = get_object_or_404(Resume, hackathon=vacancy.team.hackathon, user_id=user.id)
+            softs = SoftSkillTag.objects.filter(resume = resume).all()
+            softs_text = []
+            for s in softs:
+                softs_text.append(s.tag_text.lower())
+            hards = HardSkillTag.objects.filter(resume = resume).all()
+            hards_text = []
+            for h in hards:
+                hards_text.append(h.tag_text.lower())
+            for keyword in keywords:
+                if keyword.lower() in softs_text:
+                    count += 1
+                if keyword.lower() in hards_text:
+                    count += 1
+            matching[user.id] = count
+    raiting = sorted(list(matching.items()), key= lambda x: list(x)[1], reverse=True)
+    result = []
+    for i in raiting:
+        result = list(i)[0]
+    return 200, result
 
-@team_router.post('/apply_for_job')
+
+@team_router.post('/apply_for_job', auth=AuthBearer())
 def apply_for_job(request, vac_id):
     vacancy = Vacancy.objects.filter(id = vac_id).first()
     team_owner_email = vacancy.team.creator.email
@@ -189,14 +224,14 @@ def apply_for_job(request, vac_id):
                       f"Посмотрите новый отклик", 'sidnevar@yandex.ru',
                       [team_owner_email], fail_silently=False)
 
-@team_router.get("/get_applies_for_team", response={200: List[ApplyOut]})
+@team_router.get("/get_applies_for_team", response={200: List[ApplyOut]}, auth=AuthBearer())
 def get_team_applies(request, vacancy_id):
     vacancy = Vacancy.objects.filter(id = vacancy_id).first()
     applies = Apply.objects.filter(vacancy = vacancy)
     return 200, applies
 
 
-@team_router.get("/{team_id}", response={200: TeamSchema})
+@team_router.get("/{team_id}", response={200: TeamSchema}, auth=AuthBearer())
 def get_team_by_id(request, team_id: int):
     team = get_object_or_404(Team, id = team_id)
     return 200, team

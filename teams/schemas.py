@@ -50,3 +50,5 @@ class Error(Schema):
 class SentEmail(Schema):
     link: str
     
+class UserSuggesionForVacansionSchema(Schema):
+    ids: List[int]
