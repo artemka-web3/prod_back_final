@@ -162,8 +162,12 @@ def get_user_team_in_hackathon(request, id: int):
     user_id = payload_dict['user_id']
     hackathon = get_object_or_404(Hackathon, id = id)
     teams = Team.objects.filter(hackathon = hackathon).all()
-    for t in teams:
-        if user_id in t.team_members:
-            return 200, t
+    if teams:
+        for t in teams:
+            if user_id in t.team_members:
+                return 200, t
+    else: 
+        return 404
+            
         
 
