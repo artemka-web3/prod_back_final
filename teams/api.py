@@ -1,7 +1,7 @@
 from ninja import Router
 from typing import List
 from resumes.models import Resume, SoftSkillTag, HardSkillTag
-from .schemas import TeamIn, TeamSchema, Successful, Error, SentEmail, TeamSchemaOut, VacancySchemaOut, AddUserToTeam, ApplyOut, UserSuggesionForVacansionSchema
+from .schemas import TeamIn, TeamSchema, Successful, Error, SentEmail, TeamSchemaOut, VacancySchemaOut, AddUserToTeam, ApplyOut, UserSuggesionForVacansionSchema, ApplierSchema
 from .models import Team
 from vacancies.models import Vacancy, Keyword, Apply
 from django.shortcuts import  get_object_or_404
@@ -53,11 +53,11 @@ def delete_team(request, id):
 
 
 @team_router.post("/{vacancy_id}/add_user", auth = AuthBearer(), response = {201: TeamSchema, 401: Error, 404: Error, 403: Error, 400: Error})
-def add_user_to_team(request, team_id: int, email_schema: AddUserToTeam):
+def add_user_to_team(request, vacancy_id: int, email_schema: AddUserToTeam):
     payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
     me_id = payload_dict['user_id']
     me = get_object_or_404(Account, id=me_id)
-    vacancy = get_object_or_404(Vacancy, id=team_id)
+    vacancy = get_object_or_404(Vacancy, id=vacancy_id)
     try:
         user_to_add = Account.objects.get(email=email_schema.email)
     except:
@@ -147,8 +147,8 @@ def edit_team(request, id, edited_team: TeamIn):
         for v in edited_vacs_list:
             edited_vacs_l.append(v['id'])
         to_delete_vacs = set(all_vacs_l) - set(edited_vacs_l)
-        for v in to_delete_vacs:
-            Vacancy.objects.filter(id = v.id).delete()
+        for v_id in to_delete_vacs:
+            Vacancy.objects.filter(id = v_id).delete()
 
         vacancies_l = []
         for v in all_vacs:
@@ -234,11 +234,16 @@ def apply_for_job(request, vac_id):
                       f"Посмотрите новый отклик", 'sidnevar@yandex.ru',
                       [team_owner_email], fail_silently=False)
 
-@team_router.get("/get_applies_for_team", response={200: List[ApplyOut]}, auth=AuthBearer())
+@team_router.get("/get_applies_for_team", response={200: List[ApplierSchema]}, auth=AuthBearer())
 def get_team_applies(request, team_id):
+    payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
+    user_id = payload_dict['user_id']
     team = Team.objects.filter(id = team_id).first()
     applies = Apply.objects.filter(team = team)
-    return 200, applies
+    applies_l = []
+    for app in applies:
+        applies_l.append({'applier_id': app.who_responsed.id, 'vacancy_name': app.vac.name})
+    return 200, applies_l
 
 
 @team_router.get("/{team_id}", response={200: TeamSchema}, auth=AuthBearer())

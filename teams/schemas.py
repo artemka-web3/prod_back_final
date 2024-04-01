@@ -1,10 +1,14 @@
 from .models import Team
+from vacancies.models import Apply
 from ninja.orm import create_schema
 from ninja import Schema
 from typing import List
 from pydantic import BaseModel
 
 TeamSchema = create_schema(Team)
+
+ApplierSchema = create_schema(Apply)
+
 
 
 
@@ -33,9 +37,8 @@ class TeamIn(Schema):
 
 
 class ApplyOut(Schema):
-    id: int
-    name: str
-    email: str
+    applier_id: int
+    vacancy_name: str
 
 
 
