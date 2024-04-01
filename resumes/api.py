@@ -210,7 +210,7 @@ def suggestResumeHH(request, hh_link: SuggestResumeSchema):
     )
     bs = BeautifulSoup(response.text)
     giga_chat = GigaChat(credentials=GIGA_TOKEN, verify_ssl_certs=False)
-    data = giga_chat.chat('Я тебе предоствалю резюме из hh.ru, тебе нужно выленить из него хард-скилы, софт-скилы, bio. Резюме: ' + bs.text + ' Результат верни в формате JSON-списка без каких-либо пояснений, например, {"bio": "bio", "hards": ["skill1"], "softs": ["skill1"]}. Если ты не смог найти какое-то поле, то поставь его значение null (например, если у человека не указаны софт-скилы, то поставь "softs": null). Не повторяй фразы из примера и не дублируй фразы.').choices[0].message.content
+    data = giga_chat.chat('Я тебе предоствалю резюме из hh.ru, тебе нужно выленить из него хард-скилы, софт-скилы, bio. Резюме: ' + bs.text + ' Результат верни в формате JSON-списка без каких-либо пояснений, например, {"bio": "bio", "hards": ["skill1"], "softs": ["skill1"]}. Не повторяй фразы из примера и не дублируй фразы.').choices[0].message.content
     data = json.loads(data)
     return 200,data
 
