@@ -51,29 +51,43 @@ def delete_team(request, id):
     else:
         return 400, {'details': 'You cant delete team where you are not owner'}
 
+@team_router.post('/accept_application', response={200: Successful}, auth = AuthBearer())
+def accept_application(request, app_id):
+    application = get_object_or_404(Apply, id = app_id)
+    application.team.team_members.add(application.who_responsed)
+    return 200, {'success': 'ok'}
 
-@team_router.post("/{vacancy_id}/add_user", auth = AuthBearer(), response = {201: TeamSchema, 401: Error, 404: Error, 403: Error, 400: Error})
-def add_user_to_team(request, vacancy_id: int, email_schema: AddUserToTeam):
+@team_router.post('/decline_application', response={200: Successful}, auth = AuthBearer())
+def accept_application(request, app_id):
+    application = get_object_or_404(Apply, id = app_id)
+    application.delete()
+    return 200, {'success': 'ok'}
+
+
+
+
+@team_router.post("/{team_id}/add_user", auth = AuthBearer(), response = {201: TeamSchema, 401: Error, 404: Error, 403: Error, 400: Error})
+def add_user_to_team(request, team_id: int, email_schema: AddUserToTeam):
     payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
     me_id = payload_dict['user_id']
     me = get_object_or_404(Account, id=me_id)
-    vacancy = get_object_or_404(Vacancy, id=vacancy_id)
+    team = get_object_or_404(Team, id=team_id)
     try:
         user_to_add = Account.objects.get(email=email_schema.email)
     except:
         user_to_add = None
-    if vacancy.team.creator == me:
-        if user_to_add and vacancy.team.creator == user_to_add:
+    if team.creator == me:
+        if user_to_add and team.creator == user_to_add:
             return 400, {'details': 'user is creator team'}
-        encoded_jwt = jwt.encode({"createdAt": datetime.utcnow().timestamp(), "id": vacancy.id}, SECRET_KEY,
+        encoded_jwt = jwt.encode({"createdAt": datetime.utcnow().timestamp(), "id": team.id}, SECRET_KEY,
                                  algorithm="HS256")
         try:
-            send_mail(f"Приглашение в команду {vacancy.team.name}",
+            send_mail(f"Приглашение в команду {team.name}",
                       f"https://prod.zotov.dev/join-team?vacancy_id={encoded_jwt}", 'sidnevar@yandex.ru',
                       [email_schema.email], fail_silently=False)
         except:
             pass
-        return 201, vacancy.team
+        return 201, team
     else:
         return 403, {'details': "You are not creator and you can't edit this hackathon"}
 
@@ -100,12 +114,11 @@ def remove_user_from_team(request, team_id: int, email_schema: AddUserToTeam):
 
 
 @team_router.post('/join-team', auth = AuthBearer(), response={403: Error, 200: TeamSchema, 401: Error})
-def join_team(request, vacancy_id: int):
+def join_team(request, team_id: int):
     payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
     user_id = payload_dict['user_id']
     user = get_object_or_404(Account, id=user_id)
-    vac = get_object_or_404(Vacancy, id=vacancy_id)
-    team = vac.team
+    team = get_object_or_404(Team, id=team_id)
     team.team_members.add(user)
     team.save()
     return 200, team

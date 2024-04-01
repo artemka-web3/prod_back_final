@@ -4,7 +4,7 @@ from ninja import Router
 from typing import List, Optional
 from .schemas import HackathonSchema, HackathonIn
 from .models  import Hackathon
-from teams.schemas import TeamSchema
+from teams.schemas import TeamSchema, TeamById
 from teams.models import Team
 from accounts.models import Account
 from ninja import UploadedFile, File
@@ -156,7 +156,7 @@ def list_myhackathons(request):
             to_return.append(hack)
     return 200, to_return
 
-@hackathon_router.get('/get_user_team/{id}', auth = AuthBearer(), response={200: TeamSchema, 404: Error})
+@hackathon_router.get('/get_user_team/{id}', auth = AuthBearer(), response={200: TeamById, 404: Error})
 def get_user_team_in_hackathon(request, id: str):
     payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
     user_id = payload_dict['user_id']
@@ -166,7 +166,7 @@ def get_user_team_in_hackathon(request, id: str):
         for t in teams:
             for member in t.team_members.all():
                 if int(user_id) == int(member.id):
-                    return 200, t
+                    return 200, {'id': t.id, "hackathon": t.hackathon.id, "name": t.name, "creator": t.creator.id, 'team_members': [{'id': member.id, "email": member.email, "name": member.username} for member in t.team_members.all()]}
     else: 
         return 404, {'details': "Not found"}
             
