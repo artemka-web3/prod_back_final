@@ -17,7 +17,7 @@ import jwt
 hackathon_router = Router()
 my_hackathon_router = Router()
 
-@hackathon_router.post('/', auth = AuthBearer(), response={403: Error, 201: HackathonSchema, 401: Error}) # if is authed else 409
+@hackathon_router.post('/', auth = AuthBearer(), response={403: Error, 201: HackathonSchema, 401: Error, 400: Error}) # if is authed else 409
 def create_hackathon(request, body: HackathonIn, image_cover: UploadedFile = File(...)):
     payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
     user_id = payload_dict['user_id']
