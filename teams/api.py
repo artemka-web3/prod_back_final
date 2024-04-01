@@ -84,7 +84,7 @@ def add_user_to_team(request, team_id: int, email_schema: AddUserToTeam):
                                  algorithm="HS256")
         try:
             send_mail(f"Приглашение в команду {team.name}",
-                      f"https://prod.zotov.dev/join-team?vacancy_id={encoded_jwt}", 'sidnevar@yandex.ru',
+                      f"https://prod.zotov.dev/join-team?team_id={encoded_jwt}", 'sidnevar@yandex.ru',
                       [email_schema.email], fail_silently=False)
         except:
             pass
@@ -270,7 +270,7 @@ def get_team_applies(request, team_id):
     payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
     user_id = payload_dict['user_id']
     team = Team.objects.filter(id = team_id).first()
-    applies = Apply.objects.filter(team = team)
+    applies = Apply.objects.filter(team = team).all()
     applies_l = []
     for app in applies:
         applies_l.append({'id': app.id, 'team': app.team.id, 'vac': app.vac.id, 'who_responsed': app.who_responsed.id})
