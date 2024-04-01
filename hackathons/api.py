@@ -98,7 +98,7 @@ def remove_user_from_hackathon(request, hackathon_id: int, email_schema: AddUser
         return 403, {'detail': "You are not creator and you can't edit this hackathon"}
 
 @hackathon_router.patch('/{id}', auth=AuthBearer(), response={200:HackathonSchema, 401:Error, 400:Error, 403: Error, 404: Error})
-def edit_hackathons(request, id:int, body: EditHackathon, image_cover: Optional[UploadedFile] = File(None)):
+def edit_hackathons(request, id:int, body: EditHackathon):
     hackathon = get_object_or_404(Hackathon, id=id)
     payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
     user_id = payload_dict['user_id']
@@ -116,6 +116,17 @@ def edit_hackathons(request, id:int, body: EditHackathon, image_cover: Optional[
         if body.max_participants:
             hackathon.max_participants = body.max_participants
             hackathon.save()
+        return 200, hackathon
+    else:
+        return 403, {'detail': "You are not creator and you can't edit this hackathons"}
+
+@hackathon_router.patch('/{id}/change_photo', auth=AuthBearer(), response={200:HackathonSchema, 401:Error, 400:Error, 403: Error, 404: Error})
+def change_photo(request, image_cover: UploadedFile = File(...)):
+    hackathon = get_object_or_404(Hackathon, id=id)
+    payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
+    user_id = payload_dict['user_id']
+    user = get_object_or_404(Account, id=user_id)
+    if hackathon.creator == user:
         if image_cover:
             hackathon.image_cover.save(image_cover.name, image_cover)
         return 200, hackathon
