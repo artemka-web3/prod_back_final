@@ -80,3 +80,47 @@ def get_resume(request, user_id: int, hackathon_id:int):
     result['tech'] = hards
     result['soft'] = softs
     return 200, result
+
+@router.patch('/edit', response={200: ResumeSchema, 401:Error, 400: Error, 404: Error}, auth=AuthBearer())
+def edit_resume(request, resume: ResumeSchema, pdf: Optional[UploadedFile] = File(None)):
+    payload = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
+    user_id = payload['user_id']
+    hackathon = get_object_or_404(Hackathon, id=resume.hackathon_id)
+    account = get_object_or_404(Account, id=user_id)
+    resume_created = get_object_or_404(Resume, user=account, hackathon=hackathon)
+    if resume.tech is not None:
+        hards = HardSkillTag.objects.filter(resume=resume_created).all()
+        for i in range(len(hards)):
+            hards[i].delete()
+        for tag in resume.tech:
+            HardSkillTag.objects.create(
+                resume=resume_created,
+                tag_text=tag
+            )
+    if resume.soft is not None:
+        softs = SoftSkillTag.objects.filter(resume=resume_created).all()
+        for i in range(len(softs)):
+            softs[i].delete()
+        for tag in resume.soft:
+            SoftSkillTag.objects.create(
+                resume=resume_created,
+                tag_text=tag
+            )
+    if resume.github != '':
+        resume_created.github = resume.github
+        resume_created.save()
+    if resume.hh != '':
+        resume_created.hhru = resume.hh
+        resume_created.save()
+    if resume.telegram != '':
+        resume_created.telegram = resume.telegram
+        resume_created.save()
+    if resume.personal_website != '':
+        account = get_object_or_404(Account, id=user_id)
+        resume_created.user = account
+        resume_created.save()
+    result = resume.dict().copy()
+    if pdf is not None:
+        resume_created.pdf.save(pdf.name, pdf)
+        result['pdf_link'] = resume_created.pdf
+    return 200,result
