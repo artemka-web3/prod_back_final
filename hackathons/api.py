@@ -25,7 +25,7 @@ def create_hackathon(request, body: HackathonIn, image_cover: UploadedFile = Fil
 
     if user.is_organizator:
         body_dict = body.dict()
-        hackathon = Hackathon(creator = user, name = body_dict['name'], description = body_dict['description'],
+        hackathon = Hackathon(creator=user, name=body_dict['name'], description=body_dict['description'],
                               min_participants=body.min_participants, max_participants=body.max_participants)
         hackathon.save()
         hackathon.image_cover.save(image_cover.name, image_cover)
@@ -36,7 +36,7 @@ def create_hackathon(request, body: HackathonIn, image_cover: UploadedFile = Fil
                 participant_acc = None
             encoded_jwt = jwt.encode({"createdAt": datetime.utcnow().timestamp(), "id": hackathon.id}, SECRET_KEY, algorithm="HS256")
             if participant_acc == hackathon.creator:
-                return 400, {'details':'orgs cant be participates'}
+                pass
             try:
                 send_mail(f"Приглашение в хакатон {hackathon.name}",f"https://prod.zotov.dev/join-hackaton?hackathon_id={encoded_jwt}",'sidnevar@yandex.ru', [participant], fail_silently=False)
             except: pass
