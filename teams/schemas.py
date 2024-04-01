@@ -10,7 +10,7 @@ TeamSchema = create_schema(Team)
 
 
 class ApplierSchema(Schema):
-    applier_id: int
+    app_id: int
     team: int
     vac: int
     who_responsed: int
