@@ -11,7 +11,9 @@ TeamSchema = create_schema(Team)
 
 class ApplierSchema(Schema):
     applier_id: int
-    vacancy_name: str
+    team: int
+    vac: int 
+    who_responsed: int
 
 
 class Account(BaseModel):
@@ -46,6 +48,8 @@ class VacancySchemaOut(Schema):
     keywords: List[str]
 
 class TeamSchemaOut(Schema):
+
+    id: int
     name: str
     vacancies: List[VacancySchema]
 
