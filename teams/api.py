@@ -242,3 +242,4 @@ def get_team_applies(request, vacancy_id):
 def get_team_by_id(request, team_id: int):
     team = get_object_or_404(Team, id = team_id)
     return 200, team
+
