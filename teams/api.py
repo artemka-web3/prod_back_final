@@ -1,7 +1,7 @@
 from ninja import Router
 from typing import List
 from resumes.models import Resume, SoftSkillTag, HardSkillTag
-from .schemas import TeamIn, TeamSchema, Successful, Error, TeamById, TeamSchemaOut, VacancySchemaOut, AddUserToTeam, ApplyOut, UserSuggesionForVacansionSchema, ApplierSchema
+from .schemas import TeamIn, TeamSchema, Successful, Error, SentEmail, TeamSchemaOut, VacancySchemaOut, AddUserToTeam, ApplyOut, UserSuggesionForVacansionSchema, ApplierSchema, VacansionSuggesionForUserSchema
 from .models import Team
 from vacancies.models import Vacancy, Keyword, Apply
 from django.shortcuts import  get_object_or_404
@@ -144,9 +144,9 @@ def edit_team(request, id, edited_team: TeamIn):
             all_vacs_l.append(v.id)
         for v in edited_vacs_list:
             edited_vacs_l.append(v['id'])
-        to_delete_vacs = set(all_vacs_l) - set(edited_vacs_l)
-        for v_id in to_delete_vacs:
-            Vacancy.objects.filter(id = v_id).delete()
+        # to_delete_vacs = set(all_vacs_l) - set(edited_vacs_l)
+        # for v_id in to_delete_vacs:
+            # Vacancy.objects.filter(id = v_id).delete()
 
         vacancies_l = []
         for v in all_vacs:
@@ -218,10 +218,42 @@ def get_suggest_users_for_specific_vacansion(request, vacansion_id):
                     count += 1
             matching[user.id] = count
     raiting = sorted(list(matching.items()), key= lambda x: list(x)[1], reverse=True)
-    result = {'ids': []}
+    result = {'users': []}
     for i in raiting:
-        result['ids'].append(int(list(i)[0]))
+        result['users'].append(get_object_or_404(Account, id=int(list(i)[0])))
     return 200, result
+
+@team_router.get('/suggest_vacansions_for_specific_user/{resume_id}', response={200: VacansionSuggesionForUserSchema, 404: Error}, auth=AuthBearer())
+def get_suggest_users_for_specific_vacansion(request, resume_id):
+    resume = get_object_or_404(Resume, id=resume_id)
+    softs = SoftSkillTag.objects.filter(resume=resume).all()
+    hards = HardSkillTag.objects.filter(resume=resume).all()
+    all_tags = []
+    for soft in softs:
+        all_tags.append(soft.tag_text.lower())
+    for hard in hards:
+        all_tags.append(hard.tag_text.lower())
+    all_vacansions = Vacancy.objects.all()
+    vacansions_matching = {}
+    for vacansion in all_vacansions:
+        keywords = Keyword.objects.filter(vacancy=vacansion).all()
+        count = 0
+        for keyword in keywords:
+            if keyword.text.lower() in all_tags:
+                count += 1
+        vacansions_matching[vacansion.id] = count
+    raiting = sorted(list(vacansions_matching.items()), key=lambda x: list(x)[1], reverse=True)
+    result = {'vacantions': []}
+    for i in raiting:
+        vac = get_object_or_404(Vacancy, int(list(i)[0]))
+        kws = [j.text for j in Keyword.objects.filter(vacancy=vac).all()]
+        result['vacantions'].append({
+            "id": vac.id,
+            "name": vac.name,
+            "keywords": kws
+        })
+    return 200, result
+
 
 
 @team_router.post('/apply_for_job', auth=AuthBearer())
@@ -241,15 +273,15 @@ def get_team_applies(request, team_id):
     payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
     user_id = payload_dict['user_id']
     team = Team.objects.filter(id = team_id).first()
-    applies = Apply.objects.filter(team = team).all()
+    applies = Apply.objects.filter(team = team)
     applies_l = []
     for app in applies:
         applies_l.append({'applier_id': app.who_responsed.id, 'vacancy_name': app.vac.name})
     return 200, applies_l
 
 
-@team_router.get("/{team_id}",auth=AuthBearer())
+@team_router.get("/{team_id}", response={200: TeamSchema}, auth=AuthBearer())
 def get_team_by_id(request, team_id: int):
     team = get_object_or_404(Team, id = team_id)
-    return 200, {"id": team.id, "hackathon": team.hackathon.id, "name": team.name, 'creator': team.creator.id, 'team_members': [{"id": t.id, "email": t.email, "name": t.name} for t in team.team_members.all()]}
+    return 200, team
 

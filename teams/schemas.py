@@ -4,19 +4,11 @@ from ninja.orm import create_schema
 from ninja import Schema
 from typing import List
 from pydantic import BaseModel
-from accounts.models  import Account
+from accounts.schemas import UserProfile
 
 TeamSchema = create_schema(Team)
 
 ApplierSchema = create_schema(Apply)
-
-class ApplierSchema(Schema):
-    applier_id: int
-    vac_name: str
-
-
-
-
 
 
 
@@ -63,4 +55,7 @@ class SentEmail(Schema):
     link: str
     
 class UserSuggesionForVacansionSchema(Schema):
-    ids: List[int]
+    users: List[UserProfile]
+
+class VacansionSuggesionForUserSchema(Schema):
+    users: List[VacancySchema]
