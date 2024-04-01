@@ -98,23 +98,23 @@ def remove_user_from_hackathon(request, hackathon_id: int, email_schema: AddUser
         return 403, {'detail': "You are not creator and you can't edit this hackathon"}
 
 @hackathon_router.patch('/{id}', auth=AuthBearer(), response={200:HackathonSchema, 401:Error, 400:Error, 403: Error, 404: Error})
-def edit_hackathons(request, hackothon_edit: EditHackathon, id:int, image_cover: Optional[UploadedFile] = File(None)):
+def edit_hackathons(request, hackathon_edit: EditHackathon, id:int, image_cover: Optional[UploadedFile] = File(None)):
     hackathon = get_object_or_404(Hackathon, id=id)
     payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
     user_id = payload_dict['user_id']
     user = get_object_or_404(Account, id=user_id)
     if hackathon.creator == user:
-        if hackothon_edit.name:
-            hackathon.name = hackothon_edit.name
+        if hackathon_edit.name:
+            hackathon.name = hackathon_edit.name
             hackathon.save()
-        if hackothon_edit.description:
-            hackathon.description = hackothon_edit.description
+        if hackathon_edit.description:
+            hackathon.description = hackathon_edit.description
             hackathon.save()
-        if hackothon_edit.min_participants:
-            hackathon.min_participants = hackothon_edit.min_participants
+        if hackathon_edit.min_participants:
+            hackathon.min_participants = hackathon_edit.min_participants
             hackathon.save()
-        if hackothon_edit.max_participants:
-            hackathon.max_participants = hackothon_edit.max_participants
+        if hackathon_edit.max_participants:
+            hackathon.max_participants = hackathon_edit.max_participants
             hackathon.save()
         if image_cover:
             hackathon.image_cover.save(image_cover.name, image_cover)
