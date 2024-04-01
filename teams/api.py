@@ -301,3 +301,10 @@ def get_team_by_id(request, team_id: int):
     team = get_object_or_404(Team, id = team_id)
     return 200, {'id': team.id, "hackathon": team.hackathon.id, "name": team.name, "creator": team.creator.id, 'team_members': [{'id': member.id, "email": member.email, "name": member.username} for member in team.team_members.all()]}
 
+@team_router.post('/merge/{team1_id}/{team2_id}', response={200: TeamSchema, 401:Error, 400: Error, 404: Error}, auth=AuthBearer())
+def merge_teams(request, team1_id:int, team2_id:int):
+    team1 = get_object_or_404(Team, id=team1_id)
+    team2 = get_object_or_404(Team, id=team2_id)
+    team1.team_members = team1.team_members.all() | team2.team_members.all()
+    team2.delete()
+    return 200, team1
