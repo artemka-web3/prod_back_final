@@ -125,3 +125,6 @@ class VacansionSuggesionForUserSchema(Schema):
 
 class AnalyticsSchema(Schema):
     procent: float
+
+class AnalyticsDiffSchema(Schema):
+    average_exp: float

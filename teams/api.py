@@ -330,3 +330,15 @@ def analytics(request, hackathon_id:int):
         if team.creator not in users:
             users.append(team.creator)
     return 200, {'procent': len(users)*100/len(list(hackathon.participants.all()))}
+
+@team_router.get('/analytic_difficulty/{hackathon_id}', response={200: AnalyticsDiffSchema, 404: Error})
+def analytics_difficulty(request, hackathon_id:int):
+    teams = Team.objects.filter(hackathon_id=hackathon_id)
+    count = 0
+    exp_summ = 0
+    for team in teams:
+        for mem in team.team_members.all():
+            if mem.work_experience:
+                exp_summ += mem.work_experience
+                count += 1
+    return 200, {'average_exp': exp_summ/count}
