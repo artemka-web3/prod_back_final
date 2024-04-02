@@ -1,7 +1,7 @@
 from ninja import Router
 from typing import List
 from resumes.models import Resume, SoftSkillTag, HardSkillTag
-from .schemas import TeamIn, TeamSchema, Successful, Error, SentEmail, TeamSchemaOut, VacancySchemaOut, AddUserToTeam, \
+from .schemas import TeamIn, TeamSchema, Successful, Error, SkillsAnalytics, SentEmail, TeamSchemaOut, VacancySchemaOut, AddUserToTeam, \
     ApplyOut, UserSuggesionForVacansionSchema, ApplierSchema, VacansionSuggesionForUserSchema, TeamById, \
     AnalyticsSchema, AnalyticsDiffSchema
 from .models import Team
@@ -13,6 +13,7 @@ from authtoken import AuthBearer
 from xxprod.settings import SECRET_KEY
 from datetime import datetime
 from django.core.mail import send_mail
+from collections import Counter
 from hackathons.models import Hackathon
 
 team_router = Router()
@@ -344,3 +345,24 @@ def analytics_difficulty(request, hackathon_id:int):
                 exp_summ += mem.work_experience
                 count += 1
     return 200, {'average_exp': exp_summ/count}
+
+# какие люди требуются в хакатон / с каким скилом вы там точно не пропадете
+@team_router.get("/analytic_skills/{hackathon_id}", response={200: SkillsAnalytics, 404: Error})
+def analytics_skills(request, hackathon_id: int):
+    teams = Team.objects.filter(hackathon_id = hackathon_id).all()
+    keywords_list = []
+    for team in teams:
+        vacancies = Vacancy.objects.filter(team = team).all()
+        for v in vacancies:
+            v_keywords = Keyword.objects.filter(vacancy = v).all()
+            for k in v_keywords:
+                keywords_list.append(k.text)
+    counter = Counter(keywords_list)
+    most_common_skills = counter.most_common(3)
+
+    most_common_skills = [skill[0] for skill in most_common_skills]
+    return 200, {'skills': most_common_skills}
+
+
+
+    
