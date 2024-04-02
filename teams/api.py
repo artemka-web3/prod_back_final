@@ -85,7 +85,7 @@ def add_user_to_team(request, team_id: int, email_schema: AddUserToTeam):
     if team.creator == me:
         if user_to_add and team.creator == user_to_add:
             return 400, {'details': 'user is creator team'}
-        encoded_jwt = jwt.encode({"createdAt": datetime.utcnow().timestamp(), "id": team.id}, SECRET_KEY,
+        encoded_jwt = jwt.encode({"createdAt": datetime.utcnow().timestamp(), "id": team.id, "hackathon_id": team.hackathon.id}, SECRET_KEY,
                                  algorithm="HS256")
         try:
             send_mail(f"Приглашение в команду {team.name}",
