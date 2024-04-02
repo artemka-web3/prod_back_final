@@ -54,6 +54,9 @@ def delete_team(request, id):
 @team_router.post('/accept_application', response={200: Successful}, auth = AuthBearer())
 def accept_application(request, app_id):
     application = get_object_or_404(Apply, id = app_id)
+    for team in Team.objects.all():
+        if application.who_responsed in team.team_members.all():
+            return 400, {'details': 'you are already in team'}
     application.team.team_members.add(application.who_responsed)
     application.delete()
     return 200, {'success': 'ok'}
@@ -119,6 +122,9 @@ def join_team(request, team_id: int):
     payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
     user_id = payload_dict['user_id']
     user = get_object_or_404(Account, id=user_id)
+    for team in Team.objects.all():
+        if user in team.team_members.all():
+            return 400, {'details': 'you are already in team'}
     team = get_object_or_404(Team, id=team_id)
     team.team_members.add(user)
     team.save()
