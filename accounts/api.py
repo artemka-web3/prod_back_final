@@ -9,7 +9,6 @@ from .models import Account
 from .schemas import Token, UserSignin, UserProfile, Error
 from xxprod.settings import SECRET_KEY
 
-
 router = Router()
 
 @router.post('/signup', response={201: UserProfile, 409: Error, 400: Error})
@@ -35,3 +34,4 @@ def signin(request, user: UserSignin):
         return 200, {"token": encoded_jwt}
     else:
         raise Http404
+
