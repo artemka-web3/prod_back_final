@@ -96,6 +96,7 @@ def get_resume(request, user_id: int, hackathon_id:int):
     hackathon = get_object_or_404(Hackathon, id=hackathon_id)
     resume = get_object_or_404(Resume, user=user, hackathon=hackathon)
     result = {}
+    result['id'] = resume.id
     result['bio'] = resume.bio
     result['hackathon_id'] = resume.hackathon.id
     result['github'] = resume.github
