@@ -191,16 +191,20 @@ def load_txt(request, id: str, file: UploadedFile = File(...)):
         return {
             'details': 'you have no access'
         }
-    for i in file:
+    for n, i in enumerate(file):
         try:
             participant_acc = Account.objects.get(email=i)
         except:
             participant_acc = None
-        encoded_jwt = jwt.encode({"createdAt": datetime.utcnow().timestamp(), "id": hackathon.id}, SECRET_KEY,
+        encoded_jwt = jwt.encode({"num": n, "createdAt": datetime.utcnow().timestamp(), "id": hackathon.id, "email": i}, SECRET_KEY,
                                  algorithm="HS256")
         if participant_acc == hackathon.creator:
             continue
         try:
+            Token.objects.create(
+                token=encoded_jwt,
+                is_active=True
+            )
             send_mail(f"Приглашение в хакатон {hackathon.name}",
                       f"https://prod.zotov.dev/join-hackaton?hackathon_id={encoded_jwt}", 'sidnevar@yandex.ru',
                       [i], fail_silently=False)
