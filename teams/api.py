@@ -101,7 +101,7 @@ def add_user_to_team(request, team_id: int, email_schema: AddUserToTeam):
                 is_active = True
             )
             send_mail(f"Приглашение в команду {team.name}",
-                      f"https://prod.zotov.dev/join-team?team_id={encoded_jwt}", 'sidnevar@yandex.ru',
+                      f"https://prod.zotov.dev/join-team?team_id={encoded_jwt}", 'xxprod2024@outlook.com',
                       [email_schema.email], fail_silently=False)
         except:
             pass
@@ -311,7 +311,7 @@ def apply_for_job(request, vac_id):
         Apply.objects.create(vac = vacancy, team = vacancy.team, who_responsed = user)
         try:
             send_mail(f"{user.email} откликнулся на вакансию",
-                            f"Посмотрите новый отклик", 'sidnevar@yandex.ru',
+                            f"Посмотрите новый отклик", 'xxprod2024@outlook.com',
                             [team_owner_email], fail_silently=False)
         except:
             pass
