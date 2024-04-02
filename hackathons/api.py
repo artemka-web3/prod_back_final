@@ -73,7 +73,7 @@ def add_user_to_hackathon(request, hackathon_id: int, email_schema: AddUserToHac
     if hackathon.creator == me:
         if user_to_add and hackathon.creator == user_to_add:
             return 400, {'details': 'user is creator hackathon'}
-        encoded_jwt = jwt.encode({"createdAt": datetime.utcnow().timestamp(), "id": hackathon.id}, SECRET_KEY,
+        encoded_jwt = jwt.encode({"createdAt": datetime.utcnow().timestamp(), "id": hackathon.id, "email": email_schema.email}, SECRET_KEY,
                                  algorithm="HS256")
         try:
             send_mail(f"Приглашение в хакатон {hackathon.name}",
