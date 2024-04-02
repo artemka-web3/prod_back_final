@@ -320,7 +320,7 @@ def merge_teams(request, team1_id:int, team2_id:int):
 
 @team_router.get('/analytic/{hackathon_id}', response={200: AnalyticsSchema, 404: Error})
 def analytics(request, hackathon_id:int):
-    hackathon = get_object_or_404(Hackathon, hackathon_id=hackathon_id)
+    hackathon = get_object_or_404(Hackathon, id=hackathon_id)
     users = []
     teams = Team.objects.filter(hackathon_id=hackathon_id)
     for team in teams:
