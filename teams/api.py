@@ -57,6 +57,7 @@ def delete_team(request, id):
 @team_router.post('/accept_application', response={200: Successful,  400: Error}, auth = AuthBearer())
 def accept_application(request, app_id):
     application = get_object_or_404(Apply, id = app_id)
+    
     for team in Team.objects.all():
         if application.who_responsed in team.team_members.all():
             return 400, {'details': 'you are already in team'}
