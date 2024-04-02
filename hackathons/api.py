@@ -36,7 +36,7 @@ def create_hackathon(request, body: HackathonIn, image_cover: UploadedFile = Fil
                 participant_acc = Account.objects.get(email=participant)
             except:
                 participant_acc = None
-            encoded_jwt = jwt.encode({"createdAt": datetime.utcnow().timestamp(), "id": hackathon.id}, SECRET_KEY, algorithm="HS256")
+            encoded_jwt = jwt.encode({"createdAt": datetime.utcnow().timestamp(), "id": hackathon.id, 'email': participant}, SECRET_KEY, algorithm="HS256")
             if participant_acc == hackathon.creator:
                 continue
             try:
