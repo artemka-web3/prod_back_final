@@ -2,6 +2,7 @@ import json
 from typing import Optional
 
 from django.shortcuts import get_object_or_404
+from gigachat.models import Chat, Messages, MessagesRole
 from ninja import Router, UploadedFile, File
 import jwt
 from gigachat import GigaChat
@@ -241,7 +242,11 @@ def suggestResumePdf(request, pdf: UploadedFile = File(...)):
     reader = PdfReader(pdf)
     for page in reader.pages:
         text += page.extract_text()
+    payload = Chat(messages=[Messages(
+        role=MessagesRole.USER,
+        content='Я тебе предоствалю резюме, тебе нужно вычленить из него хард-скилы, софт-скилы, bio. Резюме: '+text+' Результат верни в формате JSON-списка без каких-либо пояснений, например, {"bio": "bio", "hards": ["skill1"], "softs": ["skill1"]}. Не повторяй фразы из примера и не дублируй фразы. Напиши кратко, только самое основное (не больше 2000 символов).'
+    )], max_tokens=8192)
     with GigaChat(credentials=GIGA_TOKEN, verify_ssl_certs=False) as giga:
-        data = giga.chat('Я тебе предоствалю резюме, тебе нужно вычленить из него хард-скилы, софт-скилы, bio. Резюме: '+text+' Результат верни в формате JSON-списка без каких-либо пояснений, например, {"bio": "bio", "hards": ["skill1"], "softs": ["skill1"]}. Не повторяй фразы из примера и не дублируй фразы. Напиши кратко, только самое основное (не больше 2000 символов).').choices[0].message.content
+        data = giga.chat(payload).choices[0].message.content
         data = json.loads(data)
         return 200, data
