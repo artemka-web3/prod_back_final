@@ -57,14 +57,16 @@ def delete_team(request, id):
 @team_router.post('/accept_application', response={200: Successful,  400: Error}, auth = AuthBearer())
 def accept_application(request, app_id):
     application = get_object_or_404(Apply, id = app_id)
-    
-    for team in Team.objects.all():
-        if application.who_responsed in team.team_members.all():
-            return 400, {'details': 'you are already in team'}
-    application.team.team_members.add(application.who_responsed)
-    application.team.save()
-    application.delete()
-    return 200, {'success': 'ok'}
+    if len(application.team.team_members.all()) < application.team.hackathon.max_participants
+        for team in Team.objects.all():
+            if application.who_responsed in team.team_members.all():
+                return 400, {'details': 'you are already in team'}
+        application.team.team_members.add(application.who_responsed)
+        application.team.save()
+        application.delete()
+        return 200, {'success': 'ok'}
+    else:
+        return 400, {'details':  "team is full"}
 
 @team_router.post('/decline_application', response={200: Successful}, auth = AuthBearer())
 def decline_application(request, app_id):
@@ -138,13 +140,17 @@ def join_team(request, team_id: int, token: str):
     else:
         tkn.is_active = False
         tkn.save()
-    for team in Team.objects.all():
-        if user in team.team_members.all():
-            return 400, {'details': 'you are already in team'}
-    team = get_object_or_404(Team, id=team_id)
-    team.team_members.add(user)
-    team.save()
-    return 200, team
+    team_inst = Team.objects.filter(id = team_id).first()
+    if len(team_inst.team_members.all()) < team_inst.hackathon.max_participants:
+        for team in Team.objects.all():
+            if user in team.team_members.all():
+                return 400, {'details': 'you are already in team'}
+        team = get_object_or_404(Team, id=team_id)
+        team.team_members.add(user)
+        team.save()
+        return 200, team
+    else:
+        return 400, {'details': 'team is full'}
 
 
 @team_router.patch('/edit_team', auth = AuthBearer(), response={200: TeamSchemaOut, 401: Error, 400: Error})
