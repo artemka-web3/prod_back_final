@@ -319,7 +319,7 @@ def merge_teams(request, team1_id:int, team2_id:int):
 
 @team_router.get('/analytic/{hackathon_id}', response={200: AnalyticsSchema, 404: Error})
 def analytics(request, hackathon_id:int):
-    hackathon = get_object_or_404(Hackathon, hackathon_id)
+    hackathon = get_object_or_404(Hackathon, hackathon_id=hackathon_id)
     users = []
     teams = Team.objects.filter(hackathon_id=hackathon_id)
     for team in teams:
@@ -328,4 +328,4 @@ def analytics(request, hackathon_id:int):
                 users.append(mem)
         if team.creator not in users:
             users.append(team.creator)
-    return 200, {'procent': len(users)/len(list(hackathon.participants.all()))}
+    return 200, {'procent': len(users)*100/len(list(hackathon.participants.all()))}
