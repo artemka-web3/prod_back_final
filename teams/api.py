@@ -59,6 +59,7 @@ def accept_application(request, app_id):
         if application.who_responsed in team.team_members.all():
             return 400, {'details': 'you are already in team'}
     application.team.team_members.add(application.who_responsed)
+    application.team.save()
     application.delete()
     return 200, {'success': 'ok'}
 
