@@ -1,7 +1,8 @@
 from ninja import Router
 from typing import List
 from resumes.models import Resume, SoftSkillTag, HardSkillTag
-from .schemas import TeamIn, TeamSchema, Successful, Error, SentEmail, TeamSchemaOut, VacancySchemaOut, AddUserToTeam, ApplyOut, UserSuggesionForVacansionSchema, ApplierSchema, VacansionSuggesionForUserSchema, TeamById
+from .schemas import TeamIn, TeamSchema, Successful, Error, SentEmail, TeamSchemaOut, VacancySchemaOut, AddUserToTeam, \
+    ApplyOut, UserSuggesionForVacansionSchema, ApplierSchema, VacansionSuggesionForUserSchema, TeamById, AnalyticsSchema
 from .models import Team
 from vacancies.models import Vacancy, Keyword, Apply
 from django.shortcuts import  get_object_or_404
@@ -185,7 +186,7 @@ def get_suggest_users_for_specific_vacansion(request, vacansion_id):
     keywords = Keyword.objects.filter(vacancy_id = vacansion_id).all()
     vacancy = get_object_or_404(Vacancy, id=vacansion_id)
     matching = {}
-    for user in Account.objects.all():
+    for user in vacancy.team.hackathon.participants.all():
         if user.id == user_id:
             continue
         if user.is_organizator:
@@ -250,15 +251,16 @@ def get_suggest_vacansions_for_specific_user(request, resume_id):
         all_tags.append(soft.tag_text.lower())
     for hard in hards:
         all_tags.append(hard.tag_text.lower())
-    all_vacansions = Vacancy.objects.all()
+    all_teams = Team.objects.filter(hackaton=resume.hackathon)
     vacansions_matching = {}
-    for vacansion in all_vacansions:
-        keywords = Keyword.objects.filter(vacancy=vacansion).all()
-        count = 0
-        for keyword in keywords:
-            if keyword.text.lower() in all_tags:
-                count += 1
-        vacansions_matching[vacansion.id] = count
+    for team in all_teams:
+        for vacansion in Vacancy.objects.filter(team=team):
+            keywords = Keyword.objects.filter(vacancy=vacansion).all()
+            count = 0
+            for keyword in keywords:
+                if keyword.text.lower() in all_tags:
+                    count += 1
+            vacansions_matching[vacansion.id] = count
     raiting = sorted(list(vacansions_matching.items()), key=lambda x: list(x)[1], reverse=True)
     result = {'vacantions': []}
     for i in raiting:
@@ -314,3 +316,8 @@ def merge_teams(request, team1_id:int, team2_id:int):
     team1.save()
     team2.delete()
     return 200, team1
+
+@team_router.post('/analytic/{hackathon_id}', response={200: AnalyticsSchema, 404: Error})
+def analytics(request, hackathon_id:int):
+    users
+    team = Team.objects.filter(hackathon_id=hackathon_id)

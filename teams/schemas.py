@@ -122,3 +122,6 @@ class UserSuggesionForVacansionSchema(Schema):
 
 class VacansionSuggesionForUserSchema(Schema):
     vacantions: List[VacancyData]
+
+class AnalyticsSchema(Schema):
+    procent: float
