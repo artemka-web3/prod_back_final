@@ -26,9 +26,10 @@ def create_team(request, hackathon_id: int, body: TeamIn):
     user = get_object_or_404(Account, id=user_id)
     body_dict = body.dict()
     hackathon = get_object_or_404(Hackathon, id = hackathon_id)
-    team = Team(hackathon = hackathon, name = body_dict['name'], creator = user)
+    team = Team.objects.create(hackathon = hackathon, name = body_dict['name'], creator = user)
     team.team_members.add(user)
     team.save()
+    
     for v in body_dict['vacancies']:
         vacancy = Vacancy(team = team, name = v['name'])
         vacancy.save()
