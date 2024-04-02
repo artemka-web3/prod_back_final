@@ -122,7 +122,7 @@ def remove_user_from_team(request, team_id: int, email_schema: AddUserToTeam):
 
 
 
-@team_router.post('/join-team', auth = AuthBearer(), response={403: Error, 200: TeamSchema, 401: Error, 400})
+@team_router.post('/join-team', auth = AuthBearer(), response={403: Error, 200: TeamSchema, 401: Error, 400: Error})
 def join_team(request, team_id: int):
     payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
     user_id = payload_dict['user_id']
@@ -284,20 +284,26 @@ def get_suggest_vacansions_for_specific_user(request, resume_id):
 
 
 
-@team_router.post('/apply_for_job', auth=AuthBearer())
+@team_router.post('/apply_for_job', auth=AuthBearer(), response={400: Error})
 def apply_for_job(request, vac_id):
     vacancy = Vacancy.objects.filter(id = vac_id).first()
     team_owner_email = vacancy.team.creator.email
     payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
     user_id = payload_dict['user_id']
-    user = get_object_or_404(Account, id=user_id)
-    Apply.objects.create(vac = vacancy, team = vacancy.team, who_responsed = user)
-    try:
-        send_mail(f"{user.email} откликнулся на вакансию",
-                        f"Посмотрите новый отклик", 'sidnevar@yandex.ru',
-                        [team_owner_email], fail_silently=False)
-    except:
-        pass
+    if len(vacancy.team.team_members.all()) < vacancy.team.hackathon.max_participants:
+        user = get_object_or_404(Account, id=user_id)
+        Apply.objects.create(vac = vacancy, team = vacancy.team, who_responsed = user)
+        try:
+            send_mail(f"{user.email} откликнулся на вакансию",
+                            f"Посмотрите новый отклик", 'sidnevar@yandex.ru',
+                            [team_owner_email], fail_silently=False)
+        except:
+            pass
+
+    else:
+        return 400, {'details': "You cant join this team because it reached  max participants"}
+
+
 
 @team_router.get("/get_applies_for_team", response={200: List[ApplierSchema]}, auth=AuthBearer())
 def get_team_applies(request, team_id):
