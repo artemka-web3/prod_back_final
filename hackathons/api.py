@@ -14,6 +14,7 @@ from django.shortcuts import get_object_or_404
 from .schemas import Error, HackathonOut, EditHackathon, AddUserToHack
 from django.core.mail import send_mail
 import jwt
+import logging
 
 
 hackathon_router = Router()
@@ -46,7 +47,7 @@ def create_hackathon(request, body: HackathonIn, image_cover: UploadedFile = Fil
                     is_active=True
                 )
                 send_mail(f"Приглашение в хакатон {hackathon.name}",f"Вас пригласили на хакатон {hackathon.name} с помощью сервиса для упрощённого набора команд XaXack. Для принятия приглашения перейдите по ссылке:\n https://prod.zotov.dev/join-hackaton?hackathon_id={encoded_jwt}",'xxprod2024@outlook.com', [participant], fail_silently=False)
-            except Exception as e: print(e)
+            except Exception as e: logging.critical(e)
         return 201, hackathon
     return 403, {'detail': "You are not organizator and you can't create hackathons"}
 
@@ -94,7 +95,7 @@ def add_user_to_hackathon(request, hackathon_id: int, email_schema: AddUserToHac
             send_mail(f"Приглашение в хакатон {hackathon.name}",
                       f"Вас пригласили на хакатон {hackathon.name} с помощью сервиса для упрощённого набора команд XaXack. Для принятия приглашения перейдите по ссылке:\n https://prod.zotov.dev/join-hackaton?hackathon_id={encoded_jwt}", 'xxprod2024@outlook.com',
                       [email_schema.email], fail_silently=False)
-        except Exception as e: print(e)
+        except Exception as e: logging.critical(e)
         return 201, hackathon
     else:
         return 403, {'details': "You are not creator and you can't edit this hackathon"}
@@ -212,4 +213,4 @@ def load_txt(request, id: str, file: UploadedFile = File(...)):
             send_mail(f"Приглашение в хакатон {hackathon.name}",
                       f"Вас пригласили на хакатон {hackathon.name} с помощью сервиса для упрощённого набора команд XaXack. Для принятия приглашения перейдите по ссылке:\n https://prod.zotov.dev/join-hackaton?hackathon_id={encoded_jwt}", 'xxprod2024@outlook.com',
                       [i], fail_silently=False)
-        except Exception as e: print(e)
+        except Exception as e: logging.critical(e)
