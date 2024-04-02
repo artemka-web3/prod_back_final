@@ -2,7 +2,8 @@ from ninja import Router
 from typing import List
 from resumes.models import Resume, SoftSkillTag, HardSkillTag
 from .schemas import TeamIn, TeamSchema, Successful, Error, SentEmail, TeamSchemaOut, VacancySchemaOut, AddUserToTeam, \
-    ApplyOut, UserSuggesionForVacansionSchema, ApplierSchema, VacansionSuggesionForUserSchema, TeamById, AnalyticsSchema
+    ApplyOut, UserSuggesionForVacansionSchema, ApplierSchema, VacansionSuggesionForUserSchema, TeamById, \
+    AnalyticsSchema, AnalyticsDiffSchema
 from .models import Team
 from vacancies.models import Vacancy, Keyword, Apply
 from django.shortcuts import  get_object_or_404
