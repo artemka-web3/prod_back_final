@@ -87,8 +87,14 @@ class UserData(Schema):
     keywords: List[str]
     bio: str
 
+class VacancyData(Schema):
+    id: int
+    name: str
+    keywords: List[str]
+    team: TeamById
+
 class UserSuggesionForVacansionSchema(Schema):
     users: List[UserData]
 
 class VacansionSuggesionForUserSchema(Schema):
-    vacantions: List[VacancySchema]
+    vacantions: List[VacancyData]

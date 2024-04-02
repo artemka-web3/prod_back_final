@@ -267,7 +267,8 @@ def get_suggest_vacansions_for_specific_user(request, resume_id):
         result['vacantions'].append({
             "id": vac.id,
             "name": vac.name,
-            "keywords": kws
+            "keywords": kws,
+            "team": vac.team
         })
     return 200, result
 
