@@ -136,12 +136,12 @@ STATICFILES_DIRS = (
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-EMAIL_HOST = 'smtp-mail.outlook.com'
-EMAIL_PORT = 587
+EMAIL_HOST = 'smtp.mail.ru'
+EMAIL_PORT = 465
 EMAIL_USE_TLS = True
 
-EMAIL_HOST_USER = 'st106671@student.spbu.ru'
-EMAIL_HOST_PASSWORD = 'W4G8ryQ~47jW'
+EMAIL_HOST_USER = 'noreply@zotov.dev'
+EMAIL_HOST_PASSWORD = 'IrEZAy2rt3y&'
 
 EMAIL_SERVER = EMAIL_HOST_USER
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

@@ -101,7 +101,7 @@ def add_user_to_team(request, team_id: int, email_schema: AddUserToTeam):
                 is_active = True
             )
             send_mail(f"Приглашение в команду {team.name}",
-                      f"Вас пригласили в команду на хакатоне {team.hackathon.name}. Для принятия приглашения перейдите по ссылке:\nhttps://prod.zotov.dev/join-team?team_id={encoded_jwt}", 'st106671@student.spbu.ru',
+                      f"Вас пригласили в команду на хакатоне {team.hackathon.name}. Для принятия приглашения перейдите по ссылке:\nhttps://prod.zotov.dev/join-team?team_id={encoded_jwt}", 'noreply@zotov.dev',
                       [email_schema.email], fail_silently=False)
         except Exception as e: print(e)
         return 201, team
@@ -310,7 +310,7 @@ def apply_for_job(request, vac_id):
         Apply.objects.create(vac = vacancy, team = vacancy.team, who_responsed = user)
         try:
             send_mail(f"{user.email} откликнулся на вакансию",
-                            f"Посмотрите новый отклик", 'st106671@student.spbu.ru',
+                            f"Посмотрите новый отклик", 'noreply@zotov.dev',
                             [team_owner_email], fail_silently=False)
         except Exception as e: print(e)
 
