@@ -136,12 +136,12 @@ STATICFILES_DIRS = (
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-EMAIL_HOST = 'smtp.yandex.ru'
-EMAIL_PORT = 587
+EMAIL_HOST = 'smtp.mail.ru'
+EMAIL_PORT = 465
 EMAIL_USE_TLS = True
 
-EMAIL_HOST_USER = 'sidnevar@yandex.ru'
-EMAIL_HOST_PASSWORD = 'Qwerty02022006'
+EMAIL_HOST_USER = 'xxprod@mail.ru'
+EMAIL_HOST_PASSWORD = '!2345Asdfg'
 
 EMAIL_SERVER = EMAIL_HOST_USER
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
