@@ -87,6 +87,11 @@ class UserData(Schema):
     keywords: List[str]
     bio: str
 
+class TeamData(Schema):
+    id: int
+    name: str
+    team_members: List[Account]
+
 class VacancyData(Schema):
     id: int
     name: str
