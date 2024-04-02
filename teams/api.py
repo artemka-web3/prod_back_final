@@ -103,8 +103,7 @@ def add_user_to_team(request, team_id: int, email_schema: AddUserToTeam):
             send_mail(f"Приглашение в команду {team.name}",
                       f"Вас пригласили в команду на хакатоне {team.hackathon.name}. Для принятия приглашения перейдите по ссылке:\nhttps://prod.zotov.dev/join-team?team_id={encoded_jwt}", 'xxprod2024@outlook.com',
                       [email_schema.email], fail_silently=False)
-        except:
-            pass
+        except Exception as e: print(e)
         return 201, team
     else:
         return 403, {'details': "You are not creator and you can't edit this hackathon"}
@@ -313,8 +312,7 @@ def apply_for_job(request, vac_id):
             send_mail(f"{user.email} откликнулся на вакансию",
                             f"Посмотрите новый отклик", 'xxprod2024@outlook.com',
                             [team_owner_email], fail_silently=False)
-        except:
-            pass
+        except Exception as e: print(e)
 
     else:
         return 400, {'details': "You cant join this team because it reached  max participants"}
