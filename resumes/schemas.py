@@ -5,6 +5,7 @@ from projects.schemas import Project
 
 
 class Resume(Schema):
+    id: Optional[int] = None
     bio: Optional[str] = None
     hackathon_id: int
     tech: Optional[List[str]] = None
