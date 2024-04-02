@@ -5,7 +5,7 @@ from typing import List, Optional
 from .schemas import HackathonSchema, HackathonIn, StatusOK
 from .models  import Hackathon
 from teams.schemas import TeamSchema, TeamById
-from teams.models import Team
+from teams.models import Team, Token
 from accounts.models import Account
 from ninja import UploadedFile, File
 from authtoken import AuthBearer
@@ -46,10 +46,16 @@ def create_hackathon(request, body: HackathonIn, image_cover: UploadedFile = Fil
     return 403, {'detail': "You are not organizator and you can't create hackathons"}
 
 @hackathon_router.post('/join', auth = AuthBearer(), response={403: Error, 200: HackathonSchema, 401: Error})
-def join_hackathon(request, hackathon_id: int):
+def join_hackathon(request, hackathon_id: int, token:str):
     payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
     user_id = payload_dict['user_id']
     user = get_object_or_404(Account, id=user_id)
+    tkn = get_object_or_404(Token, token=token)
+    if not tkn.is_active:
+        return 403, {'details': "token in not active"}
+    else:
+        tkn.is_active = False
+        tkn.save()
     hackathon = get_object_or_404(Hackathon, id=hackathon_id)
     hackathon.participants.add(user)
     hackathon.save()
@@ -76,6 +82,10 @@ def add_user_to_hackathon(request, hackathon_id: int, email_schema: AddUserToHac
         encoded_jwt = jwt.encode({"createdAt": datetime.utcnow().timestamp(), "id": hackathon.id, "email": email_schema.email}, SECRET_KEY,
                                  algorithm="HS256")
         try:
+            Token.objects.create(
+                token=encoded_jwt,
+                is_active=True
+            )
             send_mail(f"Приглашение в хакатон {hackathon.name}",
                       f"https://prod.zotov.dev/join-hackaton?hackathon_id={encoded_jwt}", 'sidnevar@yandex.ru',
                       [email_schema.email], fail_silently=False)
