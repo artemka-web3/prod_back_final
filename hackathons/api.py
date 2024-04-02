@@ -37,9 +37,14 @@ def create_hackathon(request, body: HackathonIn, image_cover: UploadedFile = Fil
             except:
                 participant_acc = None
             encoded_jwt = jwt.encode({"createdAt": datetime.utcnow().timestamp(), "id": hackathon.id, 'email': participant}, SECRET_KEY, algorithm="HS256")
+
             if participant_acc == hackathon.creator:
                 continue
             try:
+                Token.objects.create(
+                    token=encoded_jwt,
+                    is_active=True
+                )
                 send_mail(f"Приглашение в хакатон {hackathon.name}",f"https://prod.zotov.dev/join-hackaton?hackathon_id={encoded_jwt}",'sidnevar@yandex.ru', [participant], fail_silently=False)
             except: pass
         return 201, hackathon
