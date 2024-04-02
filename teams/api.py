@@ -73,6 +73,7 @@ def decline_application(request, app_id):
 
 
 
+
 @team_router.post("/{team_id}/add_user", auth = AuthBearer(), response = {201: TeamSchema, 401: Error, 404: Error, 403: Error, 400: Error})
 def add_user_to_team(request, team_id: int, email_schema: AddUserToTeam):
     payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
