@@ -8,6 +8,14 @@ from typing import Optional
 
 TeamSchema = create_schema(Team)
 
+class UserProfile(Schema):
+    username: str = Field(..., min_length=1, max_length=30, required=True)
+    email: str = Field(..., min_length=1, max_length=60, required=True)
+    password: str = Field(..., min_length=6, required=True)
+    is_organizator: bool
+    age: Optional[int] = None
+    city: Optional[str] = ''
+    work_experience: Optional[int] = None
 
 class ApplierSchema(Schema):
     app_id: int
@@ -90,7 +98,7 @@ class UserData(Schema):
 class TeamData(Schema):
     id: int
     name: str
-    team_members: List[Account]
+    team_members: List[UserData]
 
 class VacancyData(Schema):
     id: int
