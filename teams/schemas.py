@@ -96,7 +96,7 @@ class VacancyData(Schema):
     id: int
     name: str
     keywords: List[str]
-    team: TeamById
+    team: TeamData
 
 class UserSuggesionForVacansionSchema(Schema):
     users: List[UserData]
