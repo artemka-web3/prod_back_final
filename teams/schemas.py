@@ -16,7 +16,7 @@ class ApplierSchema(Schema):
     who_responsed: int
 
 
-class Account(BaseModel):
+class Account(Schema):
     id: int
     email: str
     name: str
@@ -90,7 +90,7 @@ class UserData(Schema):
 class TeamData(Schema):
     id: int
     name: str
-    team_members: List[str]
+    team_members: List[Account]
 
 class VacancyData(Schema):
     id: int
