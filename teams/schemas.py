@@ -90,7 +90,7 @@ class UserData(Schema):
 class TeamData(Schema):
     id: int
     name: str
-    team_members: List[Account]
+    team_members: List[str]
 
 class VacancyData(Schema):
     id: int
