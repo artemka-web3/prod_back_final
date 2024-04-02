@@ -4,7 +4,7 @@ from resumes.models import Resume, SoftSkillTag, HardSkillTag
 from .schemas import TeamIn, TeamSchema, Successful, Error, SkillsAnalytics, SentEmail, TeamSchemaOut, VacancySchemaOut, AddUserToTeam, \
     ApplyOut, UserSuggesionForVacansionSchema, ApplierSchema, VacansionSuggesionForUserSchema, TeamById, \
     AnalyticsSchema, AnalyticsDiffSchema
-from .models import Team
+from .models import Team, Token
 from vacancies.models import Vacancy, Keyword, Apply
 from django.shortcuts import  get_object_or_404
 from accounts.models import Account
@@ -91,6 +91,10 @@ def add_user_to_team(request, team_id: int, email_schema: AddUserToTeam):
         encoded_jwt = jwt.encode({"createdAt": datetime.utcnow().timestamp(), "id": team.id, "hackathon_id": team.hackathon.id}, SECRET_KEY,
                                  algorithm="HS256")
         try:
+            Token.objects.create(
+                token = encoded_jwt,
+                is_active = True
+            )
             send_mail(f"Приглашение в команду {team.name}",
                       f"https://prod.zotov.dev/join-team?team_id={encoded_jwt}", 'sidnevar@yandex.ru',
                       [email_schema.email], fail_silently=False)
@@ -123,22 +127,24 @@ def remove_user_from_team(request, team_id: int, email_schema: AddUserToTeam):
 
 
 @team_router.post('/join-team', auth = AuthBearer(), response={403: Error, 200: TeamSchema, 401: Error, 400: Error})
-def join_team(request, team_id: int):
+def join_team(request, team_id: int, token: str):
     payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
     user_id = payload_dict['user_id']
     user = get_object_or_404(Account, id=user_id)
-    team = Team.objects.filter(id = team_id).first()
-    if len(team.team_members.all()) < int(team.hackathon.max_participants):
-        for team in Team.objects.all():
-            if user in team.team_members.all():
-                return 400, {'details': 'you are already in team'}
-        team = get_object_or_404(Team, id=team_id)
-        team.team_members.add(user)
-        team.save()
-        return 200, team
-
+    tkn = get_object_or_404(Token, token=token)
+    if not tkn.is_active:
+        return 403, {'details': "token in not active"}
     else:
-        return 400, {'details': "You cant join this team because it reached  max participants"}
+        tkn.is_active = False
+        tkn.save()
+    for team in Team.objects.all():
+        if user in team.team_members.all():
+            return 400, {'details': 'you are already in team'}
+    team = get_object_or_404(Team, id=team_id)
+    team.team_members.add(user)
+    team.save()
+    return 200, team
+
 
 @team_router.patch('/edit_team', auth = AuthBearer(), response={200: TeamSchemaOut, 401: Error, 400: Error})
 def edit_team(request, id: int, edited_team: TeamIn):
