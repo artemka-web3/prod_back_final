@@ -46,7 +46,7 @@ def create_hackathon(request, body: HackathonIn, image_cover: UploadedFile = Fil
                     token=encoded_jwt,
                     is_active=True
                 )
-                send_mail(f"Приглашение в хакатон {hackathon.name}",f"Вас пригласили на хакатон {hackathon.name} с помощью сервиса для упрощённого набора команд XaXack. Для принятия приглашения перейдите по ссылке:\n https://prod.zotov.dev/join-hackaton?hackathon_id={encoded_jwt}",'xxprod2024@outlook.com', [participant], fail_silently=False)
+                send_mail(f"Приглашение в хакатон {hackathon.name}",f"Вас пригласили на хакатон {hackathon.name} с помощью сервиса для упрощённого набора команд XaXack. Для принятия приглашения перейдите по ссылке:\n https://prod.zotov.dev/join-hackaton?hackathon_id={encoded_jwt}",'st106671@student.spbu.ru', [participant], fail_silently=False)
             except Exception as e: logging.critical(e)
         return 201, hackathon
     return 403, {'detail': "You are not organizator and you can't create hackathons"}
@@ -93,7 +93,7 @@ def add_user_to_hackathon(request, hackathon_id: int, email_schema: AddUserToHac
                 is_active=True
             )
             send_mail(f"Приглашение в хакатон {hackathon.name}",
-                      f"Вас пригласили на хакатон {hackathon.name} с помощью сервиса для упрощённого набора команд XaXack. Для принятия приглашения перейдите по ссылке:\n https://prod.zotov.dev/join-hackaton?hackathon_id={encoded_jwt}", 'xxprod2024@outlook.com',
+                      f"Вас пригласили на хакатон {hackathon.name} с помощью сервиса для упрощённого набора команд XaXack. Для принятия приглашения перейдите по ссылке:\n https://prod.zotov.dev/join-hackaton?hackathon_id={encoded_jwt}", 'st106671@student.spbu.ru',
                       [email_schema.email], fail_silently=False)
         except Exception as e: logging.critical(e)
         return 201, hackathon
@@ -211,6 +211,6 @@ def load_txt(request, id: str, file: UploadedFile = File(...)):
                 is_active=True
             )
             send_mail(f"Приглашение в хакатон {hackathon.name}",
-                      f"Вас пригласили на хакатон {hackathon.name} с помощью сервиса для упрощённого набора команд XaXack. Для принятия приглашения перейдите по ссылке:\n https://prod.zotov.dev/join-hackaton?hackathon_id={encoded_jwt}", 'xxprod2024@outlook.com',
+                      f"Вас пригласили на хакатон {hackathon.name} с помощью сервиса для упрощённого набора команд XaXack. Для принятия приглашения перейдите по ссылке:\n https://prod.zotov.dev/join-hackaton?hackathon_id={encoded_jwt}", 'st106671@student.spbu.ru',
                       [i], fail_silently=False)
         except Exception as e: logging.critical(e)
