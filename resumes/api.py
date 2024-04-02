@@ -242,6 +242,6 @@ def suggestResumePdf(request, pdf: UploadedFile = File(...)):
     for page in reader.pages:
         text += page.extract_text()
     with GigaChat(credentials=GIGA_TOKEN, verify_ssl_certs=False) as giga:
-        data = giga.chat('Я тебе предоствалю резюме, тебе нужно вычленить из него хард-скилы, софт-скилы, bio. Резюме: '+text+' Результат верни в формате JSON-списка без каких-либо пояснений, например, {"bio": "bio", "hards": ["skill1"], "softs": ["skill1"]}. Не повторяй фразы из примера и не дублируй фразы. Напиши кратко, только самое основное').choices[0].message.content
+        data = giga.chat('Я тебе предоствалю резюме, тебе нужно вычленить из него хард-скилы, софт-скилы, bio. Резюме: '+text+' Результат верни в формате JSON-списка без каких-либо пояснений, например, {"bio": "bio", "hards": ["skill1"], "softs": ["skill1"]}. Не повторяй фразы из примера и не дублируй фразы. Напиши кратко, только самое основное (не больше 2000 символов)').choices[0].message.content
         data = json.loads(data)
         return 200, data
