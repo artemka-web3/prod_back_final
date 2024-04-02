@@ -236,9 +236,9 @@ def suggestResumeGithub(request, git_link: SuggestResumeSchema):
     return 200,resume
 
 @router.post('/suggest-resume-pdf', response={200: ResumeSuggestion, 401:Error, 400: Error, 404: Error}, auth=AuthBearer())
-def suggestResumePdf(request, pdf_file_path: SuggestResumeSchema):
+def suggestResumePdf(request, pdf: UploadedFile = File(...)):
     text = ''
-    reader = PdfReader(pdf_file_path.link)
+    reader = PdfReader(pdf.read())
     for page in reader.pages:
         text += page.extract_text()
     with GigaChat(credentials=GIGA_TOKEN, verify_ssl_certs=False) as giga:

@@ -43,3 +43,6 @@ class Error(Schema):
     
 class AddUserToHack(Schema):
     email: str
+
+class StatusOK(Schema):
+    status: str = 'ok'

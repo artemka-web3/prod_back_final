@@ -2,7 +2,7 @@ from datetime import datetime
 
 from ninja import Router
 from typing import List, Optional
-from .schemas import HackathonSchema, HackathonIn
+from .schemas import HackathonSchema, HackathonIn, StatusOK
 from .models  import Hackathon
 from teams.schemas import TeamSchema, TeamById
 from teams.models import Team
@@ -169,6 +169,26 @@ def get_user_team_in_hackathon(request, id: str):
                     return 200, {'id': t.id, "hackathon": t.hackathon.id, "name": t.name, "creator": t.creator.id, 'team_members': [{'id': member.id, "email": member.email, "name": member.username} for member in t.team_members.all()]}
     else: 
         return 404, {'details': "Not found"}
-            
-        
 
+
+'''@hackathon_router.get('/{id}/load_csv', response={200: StatusOK, 403: Error, 404: Error})
+def load_csv(request, id: str, file: UploadedFile = File(...)):
+    payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
+    user_id = payload_dict['user_id']
+    user = get_object_or_404(id=user_id)
+    if not user.is_organizator:
+        return {
+            'details': 'you have no access'
+        }
+    hackathon = get_object_or_404(Hackathon, id=int(id))
+    teams = Team.objects.filter(hackathon=hackathon).all()
+    if teams:
+        for t in teams:
+            for member in t.team_members.all():
+                if int(user_id) == int(member.id):
+                    return 200, {'id': t.id, "hackathon": t.hackathon.id, "name": t.name, "creator": t.creator.id,
+                                 'team_members': [{'id': member.id, "email": member.email, "name": member.username} for
+                                                  member in t.team_members.all()]}
+    else:
+        return 404, {'details': "Not found"}
+'''
