@@ -60,7 +60,7 @@ def delete_team(request, id):
 def accept_application(request, app_id):
     application = get_object_or_404(Apply, id = app_id)
     if len(application.team.team_members.all()) < application.team.hackathon.max_participants:
-        for team in Team.objects.all():
+        for team in Team.objects.filter(hackathon = application.team.hackathon).all():
             if application.who_responsed in team.team_members.all():
                 return 400, {'details': 'you are already in team'}
         application.team.team_members.add(application.who_responsed)
@@ -142,9 +142,10 @@ def join_team(request, team_id: int, token: str):
     else:
         tkn.is_active = False
         tkn.save()
+
     team_inst = Team.objects.filter(id = team_id).first()
-    if len(team_inst.team_members.all()) < team_inst.hackathon.max_participants:
-        for team in Team.objects.all():
+    if len(team_inst.team_members.all()) < int(team_inst.hackathon.max_participants):
+        for team in Team.objects.filter(hackathon = team_inst.hackathon).all():
             if user in team.team_members.all():
                 return 400, {'details': 'you are already in team'}
         team = get_object_or_404(Team, id=team_id)
