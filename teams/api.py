@@ -122,19 +122,23 @@ def remove_user_from_team(request, team_id: int, email_schema: AddUserToTeam):
 
 
 
-@team_router.post('/join-team', auth = AuthBearer(), response={403: Error, 200: TeamSchema, 401: Error})
+@team_router.post('/join-team', auth = AuthBearer(), response={403: Error, 200: TeamSchema, 401: Error, 400})
 def join_team(request, team_id: int):
     payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
     user_id = payload_dict['user_id']
     user = get_object_or_404(Account, id=user_id)
-    for team in Team.objects.all():
-        if user in team.team_members.all():
-            return 400, {'details': 'you are already in team'}
-    team = get_object_or_404(Team, id=team_id)
-    team.team_members.add(user)
-    team.save()
-    return 200, team
+    team = Team.objects.filter(id = team_id).first()
+    if len(team.team_members.all()) < int(team.hackathon.max_participants):
+        for team in Team.objects.all():
+            if user in team.team_members.all():
+                return 400, {'details': 'you are already in team'}
+        team = get_object_or_404(Team, id=team_id)
+        team.team_members.add(user)
+        team.save()
+        return 200, team
 
+    else:
+        return 400, {'details': "You cant join this team because it reached  max participants"}
 
 @team_router.patch('/edit_team', auth = AuthBearer(), response={200: TeamSchemaOut, 401: Error, 400: Error})
 def edit_team(request, id: int, edited_team: TeamIn):
