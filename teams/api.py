@@ -251,7 +251,7 @@ def get_suggest_vacansions_for_specific_user(request, resume_id):
         all_tags.append(soft.tag_text.lower())
     for hard in hards:
         all_tags.append(hard.tag_text.lower())
-    all_teams = Team.objects.filter(hackaton=resume.hackathon)
+    all_teams = Team.objects.filter(hackathon=resume.hackathon)
     vacansions_matching = {}
     for team in all_teams:
         for vacansion in Vacancy.objects.filter(team=team):
