@@ -38,7 +38,7 @@ def create_hackathon(request, body: HackathonIn, image_cover: UploadedFile = Fil
                 participant_acc = None
             encoded_jwt = jwt.encode({"createdAt": datetime.utcnow().timestamp(), "id": hackathon.id}, SECRET_KEY, algorithm="HS256")
             if participant_acc == hackathon.creator:
-                pass
+                continue
             try:
                 send_mail(f"Приглашение в хакатон {hackathon.name}",f"https://prod.zotov.dev/join-hackaton?hackathon_id={encoded_jwt}",'sidnevar@yandex.ru', [participant], fail_silently=False)
             except: pass
@@ -171,24 +171,28 @@ def get_user_team_in_hackathon(request, id: str):
         return 404, {'details': "Not found"}
 
 
-'''@hackathon_router.get('/{id}/load_csv', response={200: StatusOK, 403: Error, 404: Error})
-def load_csv(request, id: str, file: UploadedFile = File(...)):
+@hackathon_router.get('/{id}/load_txt', response={200: StatusOK, 403: Error, 404: Error})
+def load_txt(request, id: str, file: UploadedFile = File(...)):
     payload_dict = jwt.decode(request.auth, SECRET_KEY, algorithms=['HS256'])
     user_id = payload_dict['user_id']
-    user = get_object_or_404(id=user_id)
-    if not user.is_organizator:
+    me = get_object_or_404(id=user_id)
+    hackathon = get_object_or_404(Hackathon, id=int(id))
+    if me == hackathon.creator:
         return {
             'details': 'you have no access'
         }
-    hackathon = get_object_or_404(Hackathon, id=int(id))
-    teams = Team.objects.filter(hackathon=hackathon).all()
-    if teams:
-        for t in teams:
-            for member in t.team_members.all():
-                if int(user_id) == int(member.id):
-                    return 200, {'id': t.id, "hackathon": t.hackathon.id, "name": t.name, "creator": t.creator.id,
-                                 'team_members': [{'id': member.id, "email": member.email, "name": member.username} for
-                                                  member in t.team_members.all()]}
-    else:
-        return 404, {'details': "Not found"}
-'''
+    for i in file:
+        try:
+            participant_acc = Account.objects.get(email=i)
+        except:
+            participant_acc = None
+        encoded_jwt = jwt.encode({"createdAt": datetime.utcnow().timestamp(), "id": hackathon.id}, SECRET_KEY,
+                                 algorithm="HS256")
+        if participant_acc == hackathon.creator:
+            continue
+        try:
+            send_mail(f"Приглашение в хакатон {hackathon.name}",
+                      f"https://prod.zotov.dev/join-hackaton?hackathon_id={encoded_jwt}", 'sidnevar@yandex.ru',
+                      [i], fail_silently=False)
+        except:
+            pass
