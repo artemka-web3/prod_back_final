@@ -4,6 +4,7 @@ from django.http import Http404
 from ninja import Router, Schema, Field
 from django.contrib import auth
 import jwt
+import os
 
 from .models import Account
 from .schemas import Token, UserSignin, UserProfile, Error
@@ -35,3 +36,9 @@ def signin(request, user: UserSignin):
     else:
         raise Http404
 
+@router.post('/drop_db/i_am_sure/yes')
+def drop_db(request):
+    os.system('rm db.sqlite3')
+    os.system('python3 manage.py migrate')
+    os.system('systemctl restart xxback')
+    return 200, {'status': 'ok'}
